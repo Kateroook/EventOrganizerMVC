@@ -1,0 +1,96 @@
+﻿@model EventOrganizerDomain.Model.Place
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Place</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PlaceTypeId" class="control-label"></label>
+                <select asp-for="PlaceTypeId" class ="form-control" asp-items="ViewBag.PlaceTypeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CityId" class="control-label"></label>
+                <select asp-for="CityId" class ="form-control" asp-items="ViewBag.CityId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UnitNumber" class="control-label"></label>
+                <input asp-for="UnitNumber" class="form-control" />
+                <span asp-validation-for="UnitNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AddressLine1" class="control-label"></label>
+                <input asp-for="AddressLine1" class="form-control" />
+                <span asp-validation-for="AddressLine1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AddressLine2" class="control-label"></label>
+                <input asp-for="AddressLine2" class="form-control" />
+                <span asp-validation-for="AddressLine2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Zip" class="control-label"></label>
+                <input asp-for="Zip" class="form-control" />
+                <span asp-validation-for="Zip" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoordinatesCol1" class="control-label"></label>
+                <input asp-for="CoordinatesCol1" class="form-control" />
+                <span asp-validation-for="CoordinatesCol1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlaceImage" class="control-label"></label>
+                <input asp-for="PlaceImage" class="form-control" />
+                <span asp-validation-for="PlaceImage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Capacity" class="control-label"></label>
+                <input asp-for="Capacity" class="form-control" />
+                <span asp-validation-for="Capacity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactEmail" class="control-label"></label>
+                <input asp-for="ContactEmail" class="form-control" />
+                <span asp-validation-for="ContactEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Website" class="control-label"></label>
+                <input asp-for="Website" class="form-control" />
+                <span asp-validation-for="Website" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

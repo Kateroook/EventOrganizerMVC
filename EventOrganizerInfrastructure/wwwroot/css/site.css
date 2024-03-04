@@ -1,0 +1,88 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+    background: #fff;
+    height: auto !important;
+    height: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    margin-bottom: 60px;
+    //margin: 170px;
+    color: #000;
+    font-family: robotoregular, Roboto, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    height: 100%;
+    line-height: 1.42;
+}
+
+.content{
+    padding:20px;
+}
+.content--top {
+    padding-top: 50px;
+}
+
+.fix {
+    box-sizing: border-box;
+    margin: 0 auto;
+    max-width: 1170px;
+    padding: 0 15px;
+}
+.custom-card:hover {
+    background-color: black;
+    transition: background-color 0.3s ease;
+}
+
+.btn-details {
+    display: none;
+}
+.custom-card:hover .btn-details {
+    display: block; 
+}
+
+
+span.event__data {
+}
+
+span.event__date {
+}
+
+span.event_name {
+}
+
+span.event__place {
+}
+
+span.event__price {
+}
+
+span.event-info {
+}
+
+span.event-info__date {
+}
+
+span.event-info__name {
+}
+
+span.event-info__place {
+}
