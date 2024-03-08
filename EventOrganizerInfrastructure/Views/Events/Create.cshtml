@@ -21,6 +21,11 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="Tags" class="control-label">Теги</label>
+                <select asp-for="Tags" class="form-control" asp-items="ViewBag.TagId" multiple="multiple"></select>
+            </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
@@ -51,22 +56,24 @@
                 <input asp-for="Capacity" class="form-control" />
                 <span asp-validation-for="Capacity" class="text-danger"></span>
             </div>
-@*             <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastUpdatedAt" class="control-label"></label>
-                <input asp-for="LastUpdatedAt" class="form-control" />
-                <span asp-validation-for="LastUpdatedAt" class="text-danger"></span>
-            </div> *@
+
+@*             <form asp-action="UploadPicture" asp-controller="Events" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label asp-for="Picture" class="control-label"></label>
+                    <input type="file" name="picture" class="form-control" />
+                </div>
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-primary">Upload Picture</button>
+            </form> *@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+ 
+
+
 
 <div>
     <a asp-action="Index">Back to List</a>

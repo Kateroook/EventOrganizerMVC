@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EventOrganizerDomain.Model;
 using EventOrganizerInfrastructure;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 
 namespace EventOrganizerInfrastructure.Controllers
 {
@@ -24,7 +25,12 @@ namespace EventOrganizerInfrastructure.Controllers
         // GET: Events
         public async Task<IActionResult> Index()
         {
-            var dbeventOrganizerContext = _context.Events.Include(e => e.Place).ThenInclude(p => p.City);
+
+            var dbeventOrganizerContext = _context.Events
+    .Include(e => e.Place).ThenInclude(p => p.City)
+    .Include(e => e.Organizers)
+    .Include(e => e.Tags)
+    .OrderByDescending(e => e.DateTimeStart);
             return View(await dbeventOrganizerContext.ToListAsync());
         }
 
@@ -51,6 +57,8 @@ namespace EventOrganizerInfrastructure.Controllers
         public IActionResult Create()
         {
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name");
+            ViewData["Tags"] = new SelectList(_context.Tags, "Id", "Name");
+            ViewBag.Organizers = new SelectList(_context.Users.Where(u => u.Role.Name == "organizer"), "Id", "FullName" ,"OrganizationName");
             return View();
         }
 
@@ -59,17 +67,31 @@ namespace EventOrganizerInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,CreatedAt,LastUpdatedAt,Id")] Event @event)
+        public async Task<IActionResult> Create([Bind("PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,CreatedAt,LastUpdatedAt,PictureUrl,Id")] Event @event, int[] tags, int[] organizers, int[] comments, int[] regs)
         {
+
+
+
             if (ModelState.IsValid)
             {
                 _context.Add(@event);
+                foreach(var tagId  in tags)
+                {
+                    var eventTag = new Tag { Id = tagId };
+                    @event.Tags.Add(eventTag);            
+                }
+                    @event.CreatedAt = DateTime.Now;
+                    @event.LastUpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
+            ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title");
             return View(@event);
         }
+
 
         // GET: Events/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -93,7 +115,7 @@ namespace EventOrganizerInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,CreatedAt,LastUpdatedAt,Id")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,CreatedAt,LastUpdatedAt, PictureUrl, Id")] Event @event)
         {
             if (id != @event.Id)
             {
@@ -120,7 +142,7 @@ namespace EventOrganizerInfrastructure.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name"+"CityId", @event.PlaceId);
+            ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name" + "CityId", @event.PlaceId);
             return View(@event);
         }
 
@@ -188,5 +210,6 @@ namespace EventOrganizerInfrastructure.Controllers
         {
             return _context.Events.Any(e => e.Id == id);
         }
+
     }
 }

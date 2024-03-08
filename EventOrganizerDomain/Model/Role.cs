@@ -5,7 +5,6 @@ namespace EventOrganizerDomain.Model;
 
 public partial class Role : Entity
 {
-    //public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 

@@ -6,8 +6,6 @@ namespace EventOrganizerDomain.Model;
 
 public partial class Place : Entity
 {
-    //public int Id { get; set; }
-
     public int PlaceTypeId { get; set; }
 
     public int? CityId { get; set; }
@@ -28,8 +26,6 @@ public partial class Place : Entity
 
     public string? CoordinatesCol2 { get; set; }
 
-    public byte[]? PlaceImage { get; set; }
-
     public int? Capacity { get; set; }
 
     public string? PhoneNumber { get; set; }
@@ -37,6 +33,8 @@ public partial class Place : Entity
     public string? ContactEmail { get; set; }
 
     public string? Website { get; set; }
+
+    public string? ImageUrl { get; set; }
 
     public virtual City? City { get; set; }
 

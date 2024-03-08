@@ -24,10 +24,6 @@ public partial class DbeventOrganizerContext : DbContext
 
     public virtual DbSet<Event> Events { get; set; }
 
-    public virtual DbSet<EventsOrganizer> EventsOrganizers { get; set; }
-
-    public virtual DbSet<EventsTag> EventsTags { get; set; }
-
     public virtual DbSet<Place> Places { get; set; }
 
     public virtual DbSet<PlaceType> PlaceTypes { get; set; }
@@ -60,7 +56,7 @@ public partial class DbeventOrganizerContext : DbContext
                 .HasForeignKey(d => d.CountryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Cities_Countries");
-        });       
+        });
 
         modelBuilder.Entity<Comment>(entity =>
         {
@@ -102,6 +98,7 @@ public partial class DbeventOrganizerContext : DbContext
             entity.Property(e => e.DateTimeStart).HasColumnType("smalldatetime");
             entity.Property(e => e.Description).HasMaxLength(2000);
             entity.Property(e => e.LastUpdatedAt).HasColumnType("smalldatetime");
+            entity.Property(e => e.PictureUrl).IsUnicode(false);
             entity.Property(e => e.PlaceId).HasColumnName("PlaceID");
             entity.Property(e => e.Speaker)
                 .HasMaxLength(1000)
@@ -114,43 +111,6 @@ public partial class DbeventOrganizerContext : DbContext
                 .HasForeignKey(d => d.PlaceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Events_Places");
-
-        });
-
-        modelBuilder.Entity<EventsOrganizer>(entity =>
-        {
-            entity.HasNoKey();
-
-            entity.Property(e => e.EventId).HasColumnName("EventID");
-            entity.Property(e => e.OrganizerId).HasColumnName("OrganizerID");
-
-            entity.HasOne(d => d.Event).WithMany()
-                .HasForeignKey(d => d.EventId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EventsOrganizers_Events");
-
-            entity.HasOne(d => d.Organizer).WithMany()
-                .HasForeignKey(d => d.OrganizerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EventsOrganizers_Users");
-        });
-
-        modelBuilder.Entity<EventsTag>(entity =>
-        {
-            entity.HasKey(x => new {x.EventId, x.TagId});
-
-            entity.Property(e => e.EventId).HasColumnName("EventID");
-            entity.Property(e => e.TagId).HasColumnName("TagID");
-
-            entity.HasOne(d => d.Event).WithMany()
-                .HasForeignKey(d => d.EventId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EventsTags_Events");
-
-            entity.HasOne(d => d.Tag).WithMany()
-                .HasForeignKey(d => d.TagId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EventsTags_Tags");
         });
 
         modelBuilder.Entity<Place>(entity =>
@@ -170,13 +130,13 @@ public partial class DbeventOrganizerContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(1000)
                 .IsUnicode(false);
+            entity.Property(e => e.ImageUrl).IsUnicode(false);
             entity.Property(e => e.Name)
                 .HasMaxLength(500)
                 .IsUnicode(false);
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(15)
                 .IsUnicode(false);
-            entity.Property(e => e.PlaceImage).HasColumnType("image");
             entity.Property(e => e.PlaceTypeId).HasColumnName("PlaceTypeID");
             entity.Property(e => e.UnitNumber)
                 .HasMaxLength(20)
@@ -212,7 +172,6 @@ public partial class DbeventOrganizerContext : DbContext
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.CreatedAt).HasColumnType("smalldatetime");
             entity.Property(e => e.EventId).HasColumnName("EventID");
-            entity.Property(e => e.LastUpdatedAt).HasColumnType("smalldatetime");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.Event).WithMany(p => p.Registrations)
@@ -242,13 +201,33 @@ public partial class DbeventOrganizerContext : DbContext
         modelBuilder.Entity<Tag>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.AddedAt).HasColumnType("smalldatetime");
             entity.Property(e => e.Description)
                 .HasMaxLength(500)
                 .IsUnicode(false);
-            entity.Property(e => e.Name)
+            entity.Property(e => e.Title)
                 .HasMaxLength(200)
                 .IsUnicode(false);
+
+            entity.HasMany(d => d.Events).WithMany(p => p.Tags)
+                .UsingEntity<Dictionary<string, object>>(
+                    "EventsTag",
+                    r => r.HasOne<Event>().WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_EventsTags_Events"),
+                    l => l.HasOne<Tag>().WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_EventsTags_Tags"),
+                    j =>
+                    {
+                        j.HasKey("TagId", "EventId");
+                        j.ToTable("EventsTags");
+                        j.IndexerProperty<int>("TagId")
+                            .ValueGeneratedOnAdd()
+                            .HasColumnName("TagID");
+                        j.IndexerProperty<int>("EventId").HasColumnName("EventID");
+                    });
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -278,6 +257,27 @@ public partial class DbeventOrganizerContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Roles");
+
+            entity.HasMany(d => d.Events).WithMany(p => p.Organizers)
+                .UsingEntity<Dictionary<string, object>>(
+                    "EventsOrganizer",
+                    r => r.HasOne<Event>().WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_EventsOrganizers_Events"),
+                    l => l.HasOne<User>().WithMany()
+                        .HasForeignKey("OrganizerId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_EventsOrganizers_Users"),
+                    j =>
+                    {
+                        j.HasKey("OrganizerId", "EventId");
+                        j.ToTable("EventsOrganizers");
+                        j.IndexerProperty<int>("OrganizerId").HasColumnName("OrganizerID");
+                        j.IndexerProperty<int>("EventId")
+                            .ValueGeneratedOnAdd()
+                            .HasColumnName("EventID");
+                    });
         });
 
         OnModelCreatingPartial(modelBuilder);
@@ -285,3 +285,4 @@ public partial class DbeventOrganizerContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+

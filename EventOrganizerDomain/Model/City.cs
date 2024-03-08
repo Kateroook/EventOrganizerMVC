@@ -16,5 +16,5 @@ public partial class City : Entity
     [Display(Name = "Країна")]
     public virtual Country Country { get; set; } = null!;
 
-    public virtual ICollection<Place> Places { get; set; } = new List<Place>();
+    public virtual ICollection<Place> Places { get; set; } = [];
 }
