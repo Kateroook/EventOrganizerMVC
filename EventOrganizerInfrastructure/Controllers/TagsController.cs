@@ -54,7 +54,7 @@ namespace EventOrganizerInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,AddedAt,Id")] Tag tag)
+        public async Task<IActionResult> Create([Bind("Title,Description,Id")] Tag tag)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace EventOrganizerInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,AddedAt,Id")] Tag tag)
+        public async Task<IActionResult> Edit(int id, [Bind("Title,Description,Id")] Tag tag)
         {
             if (id != tag.Id)
             {

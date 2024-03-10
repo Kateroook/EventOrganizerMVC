@@ -15,6 +15,7 @@ public partial class User : Entity
     public string FullName => FirstName + " " + LastName;
     public string? OrganizationName { get; set; } = string.Empty;
 
+    public string OrganizationOrFullName => string.IsNullOrEmpty(OrganizationName) ? FullName : string.IsNullOrEmpty(LastName) ? OrganizationName : $"{FullName} ({OrganizationName})";
     public string Email { get; set; } = null!;
 
     public string Password { get; set; } = null!;

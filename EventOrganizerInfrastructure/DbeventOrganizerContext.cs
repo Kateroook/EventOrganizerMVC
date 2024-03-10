@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EventOrganizerDomain.Model;
+using EventOrganizerInfrastructure.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventOrganizerInfrastructure;
@@ -42,21 +43,22 @@ public partial class DbeventOrganizerContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<City>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK_Cities_1");
+        modelBuilder.ApplyConfiguration(new CityEntityTypeConfiguration());
+        //modelBuilder.Entity<City>(entity =>
+        //{
+        //    entity.HasKey(e => e.Id).HasName("PK_Cities_1");
 
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.CountryId).HasColumnName("CountryID");
-            entity.Property(e => e.Name)
-                .HasMaxLength(200)
-                .IsUnicode(false);
+        //    entity.Property(e => e.Id).HasColumnName("ID");
+        //    entity.Property(e => e.CountryId).HasColumnName("CountryID");
+        //    entity.Property(e => e.Name)
+        //        .HasMaxLength(200)
+        //        .IsUnicode(false);
 
-            entity.HasOne(d => d.Country).WithMany(p => p.Cities)
-                .HasForeignKey(d => d.CountryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Cities_Countries");
-        });
+        //    entity.HasOne(d => d.Country).WithMany(p => p.Cities)
+        //        .HasForeignKey(d => d.CountryId)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("FK_Cities_Countries");
+        //});
 
         modelBuilder.Entity<Comment>(entity =>
         {

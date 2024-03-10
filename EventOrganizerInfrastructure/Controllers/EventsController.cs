@@ -9,6 +9,7 @@ using EventOrganizerDomain.Model;
 using EventOrganizerInfrastructure;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
+using NuGet.Packaging;
 
 namespace EventOrganizerInfrastructure.Controllers
 {
@@ -57,8 +58,9 @@ namespace EventOrganizerInfrastructure.Controllers
         public IActionResult Create()
         {
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name");
-            ViewData["Tags"] = new SelectList(_context.Tags, "Id", "Name");
-            ViewBag.Organizers = new SelectList(_context.Users.Where(u => u.Role.Name == "organizer"), "Id", "FullName" ,"OrganizationName");
+            ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title");
+            ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName");
+
             return View();
         }
 
@@ -67,28 +69,47 @@ namespace EventOrganizerInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,CreatedAt,LastUpdatedAt,PictureUrl,Id")] Event @event, int[] tags, int[] organizers, int[] comments, int[] regs)
+        public async Task<IActionResult> Create([Bind("PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,PictureUrl,Id")] Event @event, int[] tags, int[] organizers)
         {
-
-
+            Place place = _context.Places.Include(pt => pt.PlaceType).Include(c => c.City).FirstOrDefault(p => p.Id == @event.PlaceId);
+            @event.Place = place;
+            ModelState.Clear();
+            TryValidateModel(place);
 
             if (ModelState.IsValid)
             {
                 _context.Add(@event);
-                foreach(var tagId  in tags)
+
+                foreach (var tagId in tags)
                 {
-                    var eventTag = new Tag { Id = tagId };
-                    @event.Tags.Add(eventTag);            
+                    var eventTag = _context.Tags.Find(tagId);
+                   if(eventTag != null)
+                    @event.Tags.Add(eventTag);
                 }
-                    @event.CreatedAt = DateTime.Now;
-                    @event.LastUpdatedAt = DateTime.Now;
+
+                foreach (var organizerId in organizers)
+                {
+                    var organizer = _context.Users.Find(organizerId);
+                    if(organizer != null)
+                    @event.Organizers.Add(organizer);                    
+                }
+
+                //if((place.Capacity != null && @event.Capacity == null) || (place.Capacity != null && @event.Capacity >= place.Capacity))
+                //{
+                //    @event.Capacity = place.Capacity;
+                //}
+
+
+                @event.CreatedAt = DateTime.Now;
+                @event.LastUpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
-            ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title");
+            ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title", @event.Tags);
+            ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
+
             return View(@event);
         }
 
