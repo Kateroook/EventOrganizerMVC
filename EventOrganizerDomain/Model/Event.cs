@@ -47,6 +47,4 @@ public partial class Event : Entity
     public virtual ICollection<User> Organizers { get; set; } = new List<User>();
 
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
-
-
 }

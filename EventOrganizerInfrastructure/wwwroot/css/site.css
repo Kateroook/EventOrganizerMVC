@@ -12,6 +12,8 @@ html {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+
+
 html {
     position: relative;
     min-height: 100%;
@@ -47,18 +49,21 @@ body {
     max-width: 1170px;
     padding: 0 15px;
 }
-.custom-card:hover {
-    background-color: black;
-    transition: background-color 0.3s ease;
+
+.event-card {
+    position: relative;
 }
 
-.btn-details {
+.card-buttons {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: none;
 }
-.custom-card:hover .btn-details {
+.event-card:hover .card-buttons {
     display: block; 
 }
-
 
 .event__data {
 }
@@ -86,3 +91,44 @@ body {
 
 .event-info__place {
 }
+.event-details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.event-image {
+    height: 300px; /* Встановлюємо висоту для зображення */
+    background-size: cover; /* Заповнюємо контейнер */
+    background-position: center; /* Центруємо зображення */
+    position: relative;
+}
+
+.event-info {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.organizers,
+.tags {
+    margin-top: 10px;
+}
+
+.tag {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 20px;
+    margin-right: 5px;
+}
+
+.action-links {
+    margin-top: 20px;
+}
+
+    .action-links .btn {
+        margin-right: 10px;
+    }
