@@ -36,6 +36,12 @@ body {
     line-height: 1.42;
 }
 
+.form-group{
+    margin-bottom: 15px;
+}
+.btn{
+    min-width:100px
+}
 .content{
     padding:20px;
 }
@@ -111,7 +117,6 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.organizers,
 .tags {
     margin-top: 10px;
 }

@@ -59,7 +59,7 @@
                     </div>
                         <div class="card-bottom card-buttons">
                         <a asp-action="Details" asp-route-id="@e.Id" class="btn btn-primary btn-details">Деталі</a>
-                        <a asp-action="Delete" class="btn btn-danger btn-delete">Видалити</a>
+                        <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-danger btn-delete">Видалити</a>
                         </div>
                 </div>
             </div>

@@ -257,11 +257,12 @@ namespace EventOrganizerInfrastructure.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var @event = await _context.Events.FindAsync(id);
-            if (@event != null)
+            if (@event == null)
             {
-                _context.Events.Remove(@event);
+                return NotFound();
             }
 
+            _context.Events.Remove(@event);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
