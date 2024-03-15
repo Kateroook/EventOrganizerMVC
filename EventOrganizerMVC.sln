@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventOrganizerDomain", "EventOrganizerDomain\EventOrganizerDomain.csproj", "{D95B059D-090B-47A8-B1AB-42B2D455742D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventOrganizerDomain", "EventOrganizerDomain\EventOrganizerDomain.csproj", "{D95B059D-090B-47A8-B1AB-42B2D455742D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventOrganizerInfrastructure", "EventOrganizerInfrastructure\EventOrganizerInfrastructure.csproj", "{BA8E85EC-0094-4483-901F-F17CB46879E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventOrganizerInfrastructure", "EventOrganizerInfrastructure\EventOrganizerInfrastructure.csproj", "{BA8E85EC-0094-4483-901F-F17CB46879E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC445D79-F850-4019-8B53-69502C4180B8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

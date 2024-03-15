@@ -18,6 +18,15 @@
                 <span asp-validation-for="PlaceId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Organizers" class="control-label">Організатори</label>
+                <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple">
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tags" class="control-label">Теги</label>
+                <select asp-for="Tags" class="form-control" asp-items="ViewBag.TagId" multiple="multiple"></select>
+            </div>
+            <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
@@ -52,7 +61,14 @@
                 <input asp-for="Capacity" class="form-control" />
                 <span asp-validation-for="Capacity" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="PictureUrl" class="control-label">Постер</label>
+                <input asp-for="PictureUrl" class="form-control" />
+                <span asp-validation-for="PictureUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <img id="imageUrlPreview" class="img-fluid" src="#" alt="Постер події" style="max-width: 200px; max-height: 200px; display: none;" />
+            </div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -71,4 +87,40 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function readImageUrl(input) {
+            var imageUrl = input.value;
+            if (imageUrl) {
+                $('#imageUrlPreview').attr('src', imageUrl).show();
+            } else {
+
+                $('#imageUrlPreview').hide();
+            }
+        }
+
+        $("#PictureUrl").change(function () {
+            readImageUrl(this);
+        });
+    </script>
+
+    <script>
+        // Функция для проверки URL на стороне клиента
+        function validateUrl(url) {
+            var urlPattern = /\b(?:https?:\/\/|www\.)\S+\b/;
+            return urlPattern.test(url);
+        }
+
+        // Привязка события изменения поля PictureUrl к функции проверки URL
+        $("#PictureUrl").change(function () {
+            var urlInput = $(this);
+            var urlValue = urlInput.val();
+            var errorSpan = urlInput.nextAll(".text-danger").first();
+            if (validateUrl(urlValue)) {
+                errorSpan.text(""); // Очистить сообщение об ошибке, если URL действителен
+            } else {
+                errorSpan.text("Неправильный формат URL");
+            }
+        });
+    </script>
 }

@@ -45,6 +45,8 @@ namespace EventOrganizerInfrastructure.Controllers
 
             var @event = await _context.Events
                 .Include(e => e.Place)
+                .Include(e => e.Organizers)
+                .Include(e => e.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@event == null)
             {
@@ -83,15 +85,15 @@ namespace EventOrganizerInfrastructure.Controllers
                 foreach (var tagId in tags)
                 {
                     var eventTag = _context.Tags.Find(tagId);
-                   if(eventTag != null)
-                    @event.Tags.Add(eventTag);
+                    if (eventTag != null)
+                        @event.Tags.Add(eventTag);
                 }
 
                 foreach (var organizerId in organizers)
                 {
                     var organizer = _context.Users.Find(organizerId);
-                    if(organizer != null)
-                    @event.Organizers.Add(organizer);                    
+                    if (organizer != null)
+                        @event.Organizers.Add(organizer);
                 }
 
                 //if((place.Capacity != null && @event.Capacity == null) || (place.Capacity != null && @event.Capacity >= place.Capacity))
@@ -115,6 +117,7 @@ namespace EventOrganizerInfrastructure.Controllers
 
 
         // GET: Events/Edit/5
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -122,22 +125,34 @@ namespace EventOrganizerInfrastructure.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events.FindAsync(id);
+            var @event = await _context.Events
+                .Include(e => e.Place)
+                .Include(e => e.Organizers)
+                .Include(e => e.Tags)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (@event == null)
             {
                 return NotFound();
             }
+
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
+            ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title", @event.Tags);
+            ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
+
             return View(@event);
         }
 
         // POST: Events/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,CreatedAt,LastUpdatedAt, PictureUrl, Id")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,PictureUrl")] Event @event, int[] tags, int[] organizers)
         {
+            Place place = _context.Places.Include(pt => pt.PlaceType).Include(c => c.City).ThenInclude(c => c.Country).FirstOrDefault(p => p.Id == @event.PlaceId);
+            @event.Place = place;
+            ModelState.Clear();
+            TryValidateModel(place);
+
             if (id != @event.Id)
             {
                 return NotFound();
@@ -147,7 +162,51 @@ namespace EventOrganizerInfrastructure.Controllers
             {
                 try
                 {
-                    _context.Update(@event);
+                    var existingEvent = await _context.Events
+                        .Include(e => e.Tags)
+                        .Include(e => e.Organizers)
+                        .FirstOrDefaultAsync(e => e.Id == id);
+
+                    if (existingEvent == null)
+                    {
+                        return NotFound();
+                    }
+
+                    existingEvent.PlaceId = @event.PlaceId;
+                    existingEvent.Title = @event.Title;
+                    existingEvent.Description = @event.Description;
+                    existingEvent.Speaker = @event.Speaker;
+                    existingEvent.DateTimeStart = @event.DateTimeStart;
+                    existingEvent.DateTimeEnd = @event.DateTimeEnd;
+                    existingEvent.Price = @event.Price;
+                    existingEvent.Capacity = @event.Capacity;
+                    existingEvent.PictureUrl = @event.PictureUrl;
+
+                    existingEvent.LastUpdatedAt = DateTime.Now;
+
+                    // Remove existing tags and add new ones
+                    existingEvent.Tags.Clear();
+                    foreach (var tagId in tags)
+                    {
+                        var tag = await _context.Tags.FindAsync(tagId);
+                        if (tag != null)
+                        {
+                            existingEvent.Tags.Add(tag);
+                        }
+                    }
+
+                    // Remove existing organizers and add new ones
+                    existingEvent.Organizers.Clear();
+                    foreach (var organizerId in organizers)
+                    {
+                        var organizer = await _context.Users.FindAsync(organizerId);
+                        if (organizer != null)
+                        {
+                            existingEvent.Organizers.Add(organizer);
+                        }
+                    }
+
+                    _context.Update(existingEvent);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -163,36 +222,14 @@ namespace EventOrganizerInfrastructure.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name" + "CityId", @event.PlaceId);
+
+            ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
+            ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title", @event.Tags);
+            ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
+
             return View(@event);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> UploadCover(int eventId, IFormFile file)
-        //{
-        //    if (file == null || file.Length == 0)
-        //        return BadRequest("Файл не выбран");
-
-        //    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/events");
-        //    var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-        //    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(stream);
-        //    }
-
-        //    var eventToUpdate = await _context.Events.FindAsync(eventId);
-        //    if (eventToUpdate == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    eventToUpdate.ImageUrl = "/uploads/" + uniqueFileName;
-        //    await _context.SaveChangesAsync();
-
-        //    return RedirectToAction("Index");
-        //}
         // GET: Events/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -203,6 +240,8 @@ namespace EventOrganizerInfrastructure.Controllers
 
             var @event = await _context.Events
                 .Include(e => e.Place)
+                .Include(e => e.Tags)
+                .Include(e => e.Organizers)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@event == null)
             {
