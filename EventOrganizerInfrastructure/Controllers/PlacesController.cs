@@ -22,6 +22,7 @@ namespace EventOrganizerInfrastructure.Controllers
         // GET: Places
         public async Task<IActionResult> Index(int? id, string? name, string? country)
         {
+
             if (id == null) return RedirectToAction("Cities", "Index");
 
             ViewBag.CityId = id;
@@ -29,6 +30,16 @@ namespace EventOrganizerInfrastructure.Controllers
             ViewBag.CityName = name;
             var placeByCity = _context.Places.Where(p => p.CityId == id).Include(p => p.City).Include(p => p.PlaceType);
             return View(await placeByCity.ToListAsync());
+        }
+        public async Task<IActionResult> Index()
+        {
+            var dbeventOrganizerContext = _context.Places
+                .Include(p => p.Events)
+                .Include(p => p.City)
+                .ThenInclude(p => p.Country)
+                .Include(p => p.PlaceType);
+
+            return View(await dbeventOrganizerContext.ToListAsync());
         }
 
         // GET: Places/Details/5
@@ -41,7 +52,12 @@ namespace EventOrganizerInfrastructure.Controllers
 
             var place = await _context.Places
                 .Include(p => p.City)
+                .ThenInclude(p => p.Country)
                 .Include(p => p.PlaceType)
+                .Include(p => p.Events)
+                    .ThenInclude(o => o.Organizers)
+                .Include(o => o.Events)
+                    .ThenInclude(t => t.Tags)               
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (place == null)
             {

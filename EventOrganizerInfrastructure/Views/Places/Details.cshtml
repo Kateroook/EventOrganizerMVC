@@ -1,4 +1,4 @@
-﻿@model EventOrganizerDomain.Model.Place
+﻿@* @model EventOrganizerDomain.Model.Place
 
 @{
     ViewData["Title"] = "Details";
@@ -100,4 +100,98 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>
+ *@
+@model EventOrganizerDomain.Model.Place
+
+@{
+    ViewData["Title"] = "Про місце";
+}
+
+<div class="container">
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="event-image" style="background-image: url('@Model.ImageUrl')"></div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <h1>@Html.DisplayFor(model => model.Name)</h1>
+            <p>@Html.DisplayFor(model => model.Description)</p>
+            @if (Model.Name != "online")
+            {
+                <p><strong>Address:</strong> @Html.DisplayFor(model => model.AddressLine1), @Html.DisplayFor(model => model.AddressLine2), @Html.DisplayFor(model => model.City.Name), @Html.DisplayFor(model => model.Zip)</p>
+                <p><strong>Capacity:</strong> @Html.DisplayFor(model => model.Capacity)</p>
+                <p><strong>Phone:</strong> @Html.DisplayFor(model => model.PhoneNumber)</p>
+                <p><strong>Email:</strong> @Html.DisplayFor(model => model.ContactEmail)</p>
+                <p><strong>Website:</strong> <a href="@Html.DisplayFor(model => model.Website)">@Html.DisplayFor(model => model.Website)</a></p>
+                <p><strong>Type:</strong> @Html.DisplayFor(model => model.PlaceType.Name)</p>
+            }
+        </div>
+    </div>
+    <div class="container mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="block-header">
+        <h2>Події в @Model.Name</h2>
+    </div>
+    <div class="row">
+        @foreach (var eventItem in Model.Events)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-300 event-card">
+                    @if (!string.IsNullOrEmpty(eventItem.PictureUrl))
+                    {
+                        <img src="@eventItem.PictureUrl" class="card-img-top" alt="Постер події">
+                    }
+                    <div class="card-body">
+                        <div class="card-text align-items-top">
+                            <p class="card-text mt-50 event-date">@eventItem.DateTimeStart.ToString("dd MMMM, HH:mm, ddd")</p>
+                            <h5 class="card-title">@eventItem.Title</h5>
+                            <div class="organizers">
+                                <p>
+                                    @foreach (var organizer in eventItem.Organizers.Take(2))
+                                    {
+                                        <span>@organizer.OrganizationOrFullName</span>
+                                        if (!organizer.Equals(eventItem.Organizers.Last()) && eventItem.Organizers.Count() > 1)
+                                        {
+                                            <span>, </span>
+                                        }
+                                    }
+                                    @if (eventItem.Organizers.Count() > 2)
+                                    {
+                                        <span>, ...</span>
+                                    }
+                                </p>
+                            </div>
+                            <div class="tags">
+                                @foreach (var tag in eventItem.Tags.Take(3))
+                                {
+                                    <span class="tag">@tag.Title</span>
+                                }
+                            </div>
+                        </div>
+
+                        <p class="event-price">
+                            @if (@eventItem.Price.HasValue && @eventItem.Price.Value != 0)
+                            {
+                                <strong>@eventItem.Price₴</strong>
+                            }
+                            else
+                            {
+                                <strong>FREE</strong>
+                            }
+                        </p>
+                    </div>
+                    <div class="card-bottom card-buttons">
+                        <a asp-controller="Events" asp-action="Details" asp-route-id="@eventItem.Id" class="btn btn-primary btn-details">Деталі</a>
+                        <a asp-controller="Events" asp-action="Delete" asp-route-id="@eventItem.Id" class="btn btn-danger btn-delete">Видалити</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

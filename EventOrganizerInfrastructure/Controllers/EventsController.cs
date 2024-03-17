@@ -10,6 +10,7 @@ using EventOrganizerInfrastructure;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 using NuGet.Packaging;
+using System.Drawing.Printing;
 
 namespace EventOrganizerInfrastructure.Controllers
 {
@@ -17,6 +18,8 @@ namespace EventOrganizerInfrastructure.Controllers
     {
         private readonly DbeventOrganizerContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+
+        private const int PageSize = 12;
         public EventsController(DbeventOrganizerContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
@@ -24,16 +27,28 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         // GET: Events
-        public async Task<IActionResult> Index()
+        // GET: Events
+        public async Task<IActionResult> Index(int? page)
         {
+            int pageNumber = page ?? 1;
+            var events = await _context.Events
+                .Include(e => e.Place).ThenInclude(p => p.City)
+                .OrderByDescending(e => e.DateTimeStart)
+                .Skip((pageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
 
-            var dbeventOrganizerContext = _context.Events
-    .Include(e => e.Place).ThenInclude(p => p.City)
-    .Include(e => e.Organizers)
-    .Include(e => e.Tags)
-    .OrderByDescending(e => e.DateTimeStart);
-            return View(await dbeventOrganizerContext.ToListAsync());
+            ViewBag.PageIndex = pageNumber;
+
+            ViewBag.HasPreviousPage = pageNumber > 1;
+            ViewBag.HasNextPage = events.Count == PageSize;
+
+            int totalEvents = await _context.Events.CountAsync();
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalEvents / PageSize);
+
+            return View(events);
         }
+
 
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -45,6 +60,8 @@ namespace EventOrganizerInfrastructure.Controllers
 
             var @event = await _context.Events
                 .Include(e => e.Place)
+                .ThenInclude(p => p.City)
+                .ThenInclude(c => c.Country)
                 .Include(e => e.Organizers)
                 .Include(e => e.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -136,9 +153,18 @@ namespace EventOrganizerInfrastructure.Controllers
                 return NotFound();
             }
 
+            // Загрузка списка всех организаторов и тегов из базы данных
+            var allOrganizers = await _context.Users.Where(u => u.Role.Name.ToLower() == "organizer").ToListAsync();
+            var allTags = await _context.Tags.ToListAsync();
+
+            // Получение массивов выбранных организаторов и тегов
+            var selectedOrganizers = @event.Organizers.Select(o => o.Id).ToArray();
+            var selectedTags = @event.Tags.Select(t => t.Id).ToArray();
+
+            // Передача списка организаторов и тегов в представление
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
-            ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title", @event.Tags);
-            ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
+            ViewData["TagId"] = new MultiSelectList(allTags, "Id", "Title", selectedTags);
+            ViewData["OrganizerId"] = new MultiSelectList(allOrganizers, "Id", "OrganizationOrFullName", selectedOrganizers);
 
             return View(@event);
         }
@@ -256,10 +282,26 @@ namespace EventOrganizerInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _context.Events.FindAsync(id);
+            var @event = await _context.Events
+                .Include(e => e.Organizers)
+                .Include(e => e.Tags)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
             if (@event == null)
             {
                 return NotFound();
+            }
+
+            var organizersToRemove = @event.Organizers.ToList();
+            foreach (var organizer in organizersToRemove)
+            {
+                @event.Organizers.Remove(organizer);
+            }
+
+            var tagsToRemove = @event.Tags.ToList();
+            foreach (var tag in tagsToRemove)
+            {
+                @event.Tags.Remove(tag);
             }
 
             _context.Events.Remove(@event);

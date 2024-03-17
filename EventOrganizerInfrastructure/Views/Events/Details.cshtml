@@ -1,7 +1,7 @@
 ﻿@model EventOrganizerDomain.Model.Event
 
 @{
-    ViewData["Title"] = "Деталі події";
+    ViewData["Title"] = "Про подію";
 }
 
 <div class="event-details-container">
@@ -13,7 +13,12 @@
     <div class="event-info">
         <h1>@Model.Title</h1>
         <p>@Model.Description</p>
-        <p><strong>@Model.Speaker:</strong> @Model.Speaker</p>
+        @if (!string.IsNullOrEmpty(Model.Speaker))
+        {
+            <strong>Speaker:</strong> @Model.Speaker
+
+            <br />
+        }
         <p><strong>Date:</strong> @Model.DateTimeStart.ToString("dd MMMM yyyy, HH:mm, ddd") - @Model.DateTimeEnd.ToString("HH:mm, ddd")</p>
         <p><strong>Price:</strong> @if (Model.Price.HasValue && Model.Price.Value != 0)
             {
@@ -26,7 +31,16 @@
         <p><strong>Capacity:</strong> @Model.Capacity</p>
         <p><strong>Created At:</strong> @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
         <p><strong>Last Updated At:</strong> @Model.LastUpdatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
-        <p><strong>Place:</strong> @Model.Place.Name</p>
+        <p>
+            <strong>Місце:</strong> <a asp-controller="Places" asp-action="Details" asp-route-id="@Model.Place.Id">@Model.Place.Name</a>
+            @if(Model.Place.Name != "online")
+            {
+                <span>@Model.Place.AddressLine1 @Model.Place.AddressLine2, @Model.Place.City.Name</span>
+            }
+            
+            <br />
+            
+        </p>
 
         <div class="organizers">
             <h4>Organizers:</h4>
