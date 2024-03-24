@@ -78,9 +78,7 @@ body {
 .form-group{
     margin-bottom: 15px;
 }
-.btn{
-   
-}
+
 .content{
     padding:20px;
 }
@@ -97,6 +95,8 @@ body {
 .block-header {
     font-weight:bold;  
     margin-bottom: 50px;
+    margin-top: 50px;
+
 }
 .event-card {
     background-color: #fff;
@@ -108,9 +108,19 @@ body {
     .event-card:hover {
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
-event-card:hover {
-    filter: brightness(90%);
+
+.place-card {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: 200PX;
 }
+.place-card:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+
 .card-img-top {
     height: 200px;
     object-fit: cover;
@@ -144,7 +154,7 @@ event-card:hover {
     background-color: white;
     padding: 10px;
     transition: opacity 0.1s ease-in-out;
-    opacity: 0; /* Начальная прозрачность */
+    opacity: 0;
 }
 .card-buttons .btn{
     margin-right: 10px;
@@ -152,6 +162,9 @@ event-card:hover {
 
 
 .event-card:hover .card-buttons {
+   opacity:1;
+}
+.place-card:hover .card-buttons {
    opacity:1;
 }
 
@@ -192,8 +205,8 @@ event-card:hover {
 
 .event-image {
     height: 300px; 
-    background-size: cover; /* Заповнюємо контейнер */
-    background-position: center; /* Центруємо зображення */
+    background-size: cover; 
+    background-position: center; 
     position: relative;
 }
 
@@ -222,9 +235,62 @@ event-card:hover {
 }
 
 
+/* Стили для блока с популярными городами */
+.popular-cities {
+    margin-bottom: 20px;
+}
 
+    .popular-cities h3 {
+        font-size: 1.5em;
+        margin-bottom: 20px;      
+        color: #333;
+    }
 
+.popular-cities-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+}
 
+    .popular-cities-list li {
+        margin-bottom: 50px;
+        margin-right: 10px;
+    }
+
+        .popular-cities-list li a {
+            display: inline-flex;
+            padding: 16px 32px;
+            font-size: 1.5em;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+            .popular-cities-list li a:hover {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+.popular-cities .btn, .popular-events
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 1em;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
 
 
 

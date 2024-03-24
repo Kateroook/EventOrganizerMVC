@@ -1,108 +1,4 @@
-﻿@* @model EventOrganizerDomain.Model.Place
-
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
-
-<div>
-    <h4>Place</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UnitNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UnitNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AddressLine1)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AddressLine1)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AddressLine2)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AddressLine2)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Zip)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Zip)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CoordinatesCol1)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CoordinatesCol1)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CoordinatesCol2)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CoordinatesCol2)
-        </dd>
-
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Capacity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Capacity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContactEmail)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContactEmail)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Website)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Website)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.City)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlaceType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlaceType.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
- *@
-@model EventOrganizerDomain.Model.Place
+﻿ @model EventOrganizerDomain.Model.Place
 
 @{
     ViewData["Title"] = "Про місце";
@@ -116,33 +12,34 @@
     <div class="row">
         <div class="col-md-6">
             <h1>@Html.DisplayFor(model => model.Name)</h1>
+            <p>@Html.DisplayFor(model => model.PlaceType.Name)</p>
             <p>@Html.DisplayFor(model => model.Description)</p>
             @if (Model.Name != "online")
             {
-                <p><strong>Address:</strong> @Html.DisplayFor(model => model.AddressLine1), @Html.DisplayFor(model => model.AddressLine2), @Html.DisplayFor(model => model.City.Name), @Html.DisplayFor(model => model.Zip)</p>
-                <p><strong>Capacity:</strong> @Html.DisplayFor(model => model.Capacity)</p>
-                <p><strong>Phone:</strong> @Html.DisplayFor(model => model.PhoneNumber)</p>
+                <p><strong>Адреса:</strong> @Html.DisplayFor(model => model.AddressLine1), @Html.DisplayFor(model => model.AddressLine2), @Html.DisplayFor(model => model.City.Name), @Html.DisplayFor(model => model.Zip)</p>
+                <p><strong>Кількість місць:</strong> @Html.DisplayFor(model => model.Capacity)</p>
+                <p><strong>Телефон:</strong> @Html.DisplayFor(model => model.PhoneNumber)</p>
                 <p><strong>Email:</strong> @Html.DisplayFor(model => model.ContactEmail)</p>
-                <p><strong>Website:</strong> <a href="@Html.DisplayFor(model => model.Website)">@Html.DisplayFor(model => model.Website)</a></p>
-                <p><strong>Type:</strong> @Html.DisplayFor(model => model.PlaceType.Name)</p>
+                <p><strong>Веб-сторінка:</strong> <a href="@Html.DisplayFor(model => model.Website)">@Html.DisplayFor(model => model.Website)</a></p>
+                
             }
         </div>
     </div>
     <div class="container mt-4">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редагувати</a>
+        <a asp-action="Index" asp-route-id="@Model.CityId" class="btn btn-secondary">До інших місць</a>
     </div>
 </div>
 
-<div class="container mt-4">
+<div class="container сontent mt-4">
     <div class="block-header">
         <h2>Події в @Model.Name</h2>
     </div>
-    <div class="row">
+    <div class="row row-cols-1 row-cols-md-4 g-3">
         @foreach (var eventItem in Model.Events)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card h-300 event-card">
+            <div class="col">
+                <div class="card event-card">
                     @if (!string.IsNullOrEmpty(eventItem.PictureUrl))
                     {
                         <img src="@eventItem.PictureUrl" class="card-img-top" alt="Постер події">
@@ -174,11 +71,10 @@
                                 }
                             </div>
                         </div>
-
-                        <p class="event-price">
+                        <p class="event-price align-items-end">
                             @if (@eventItem.Price.HasValue && @eventItem.Price.Value != 0)
                             {
-                                <strong>@eventItem.Price₴</strong>
+                                <strong>від @eventItem.Price₴</strong>
                             }
                             else
                             {

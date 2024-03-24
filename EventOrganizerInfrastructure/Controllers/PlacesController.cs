@@ -20,27 +20,42 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         // GET: Places
-        public async Task<IActionResult> Index(int? id, string? name, string? country)
+        public async Task<IActionResult> Index(int? id)
         {
-
             if (id == null) return RedirectToAction("Cities", "Index");
 
             ViewBag.CityId = id;
-            ViewBag.CountryId = country;
-            ViewBag.CityName = name;
-            var placeByCity = _context.Places.Where(p => p.CityId == id).Include(p => p.City).Include(p => p.PlaceType);
-            return View(await placeByCity.ToListAsync());
-        }
-        public async Task<IActionResult> Index()
-        {
-            var dbeventOrganizerContext = _context.Places
-                .Include(p => p.Events)
-                .Include(p => p.City)
-                .ThenInclude(p => p.Country)
-                .Include(p => p.PlaceType);
 
-            return View(await dbeventOrganizerContext.ToListAsync());
+            var city = await _context.Cities.FindAsync(id);           
+            if (city == null)
+            {
+                return NotFound();
+            }
+            ViewBag.CityName = city.Name;
+
+            var popularCities = await _context.Cities.OrderByDescending(c => c.Places.Count).Take(5).ToListAsync();
+            ViewBag.PopularCities = popularCities;
+
+
+            var popularEventsInCity = await _context.Events
+                .Where(e => e.Place.CityId == id)
+                .OrderByDescending(e => e.Registrations.Count)
+                .Take(5)
+                .ToListAsync();
+
+            ViewBag.PopularEventsInCity = popularEventsInCity;
+
+            var placesInCity = await _context.Places
+                .Where(p => p.CityId == id)
+                .Include(p => p.City)
+                    .ThenInclude(p => p.Country)
+                .Include(p => p.PlaceType)
+                .Include(p => p.Events)
+                .ToListAsync();
+
+            return View(placesInCity);
         }
+
 
         // GET: Places/Details/5
         public async Task<IActionResult> Details(int? id)

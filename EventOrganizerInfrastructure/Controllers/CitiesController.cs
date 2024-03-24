@@ -22,7 +22,9 @@ namespace EventOrganizerInfrastructure.Controllers
         // GET: Cities
         public async Task<IActionResult> Index()
         {
-            var dbeventOrganizerContext = _context.Cities.Include(c => c.Country);
+            var dbeventOrganizerContext = _context.Cities
+                .Include(c => c.Country)
+                .Include(p => p.Places);
             return View(await dbeventOrganizerContext.ToListAsync());
         }
 

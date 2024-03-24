@@ -23,7 +23,7 @@
             <div class="col">
                 <div class="card event-card">
 
-                    @if (!string.IsNullOrEmpty(e.PictureUrl))
+                    @if (!string.IsNullOrEmpty(@e.PictureUrl))
                     {
                         <img src="@e.PictureUrl" class="card-img-top" alt="Постер події">
 
@@ -48,7 +48,7 @@
                             <p class="card-text  event-price">
                             @if (e.Price.HasValue && e.Price.Value != 0)
                             {
-                                <strong>@e.Price₴</strong>
+                                <strong>від @e.Price₴</strong>
                             }
                             else
                             {

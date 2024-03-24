@@ -19,8 +19,8 @@
 
             <br />
         }
-        <p><strong>Date:</strong> @Model.DateTimeStart.ToString("dd MMMM yyyy, HH:mm, ddd") - @Model.DateTimeEnd.ToString("HH:mm, ddd")</p>
-        <p><strong>Price:</strong> @if (Model.Price.HasValue && Model.Price.Value != 0)
+        <p><strong>Дата:</strong> @Model.DateTimeStart.ToString("dd MMMM yyyy, HH:mm, ddd") - @Model.DateTimeEnd.ToString("HH:mm, ddd")</p>
+        <p><strong>Ціна:</strong> @if (Model.Price.HasValue && Model.Price.Value != 0)
             {
                 @Model.Price
             }
@@ -28,9 +28,9 @@
             {
                 <span class="text-success">FREE</span>
             }</p>
-        <p><strong>Capacity:</strong> @Model.Capacity</p>
-        <p><strong>Created At:</strong> @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
-        <p><strong>Last Updated At:</strong> @Model.LastUpdatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
+        <p><strong>Кількість місць:</strong> @Model.Capacity</p>
+        <p><strong>Створено:</strong> @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
+        <p><strong>Оновлено в останній раз:</strong> @Model.LastUpdatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
         <p>
             <strong>Місце:</strong> <a asp-controller="Places" asp-action="Details" asp-route-id="@Model.Place.Id">@Model.Place.Name</a>
             @if(Model.Place.Name != "online")

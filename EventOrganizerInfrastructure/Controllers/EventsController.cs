@@ -27,7 +27,6 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         // GET: Events
-        // GET: Events
         public async Task<IActionResult> Index(int? page)
         {
             int pageNumber = page ?? 1;
@@ -90,7 +89,7 @@ namespace EventOrganizerInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,PictureUrl,Id")] Event @event, int[] tags, int[] organizers)
         {
-            Place place = _context.Places.Include(pt => pt.PlaceType).Include(c => c.City).FirstOrDefault(p => p.Id == @event.PlaceId);
+            Place place = _context.Places.Include(pt => pt.PlaceType).Include(c => c.City).ThenInclude(c => c.Country).FirstOrDefault(p => p.Id == @event.PlaceId);
             @event.Place = place;
             ModelState.Clear();
             TryValidateModel(place);
@@ -134,7 +133,6 @@ namespace EventOrganizerInfrastructure.Controllers
 
 
         // GET: Events/Edit/5
-
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -144,7 +142,10 @@ namespace EventOrganizerInfrastructure.Controllers
 
             var @event = await _context.Events
                 .Include(e => e.Place)
+                    .ThenInclude(e=>e.City)
+                        .ThenInclude(e=>e.Country)
                 .Include(e => e.Organizers)
+                    .ThenInclude(oe => oe.Role)
                 .Include(e => e.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -153,31 +154,41 @@ namespace EventOrganizerInfrastructure.Controllers
                 return NotFound();
             }
 
-            // Загрузка списка всех организаторов и тегов из базы данных
             var allOrganizers = await _context.Users.Where(u => u.Role.Name.ToLower() == "organizer").ToListAsync();
             var allTags = await _context.Tags.ToListAsync();
 
-            // Получение массивов выбранных организаторов и тегов
             var selectedOrganizers = @event.Organizers.Select(o => o.Id).ToArray();
             var selectedTags = @event.Tags.Select(t => t.Id).ToArray();
 
-            // Передача списка организаторов и тегов в представление
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
             ViewData["TagId"] = new MultiSelectList(allTags, "Id", "Title", selectedTags);
             ViewData["OrganizerId"] = new MultiSelectList(allOrganizers, "Id", "OrganizationOrFullName", selectedOrganizers);
+            
+            var countries = await _context.Countries.ToListAsync();
+            ViewBag.Countries = new SelectList(countries, "Id", "Name");
+
+         
+            var cities = await _context.Cities.ToListAsync();
+            ViewBag.Cities = new SelectList(cities, "Id", "Name");
+
+            var placesInCities = await _context.Places.Include(c => c.City).ThenInclude(c => c.Country).Include(pt => pt.PlaceType).ToListAsync();
+            ViewBag.PlacesInCities = new SelectList(placesInCities, "Id", "Name");
 
             return View(@event);
         }
+
+       
 
         // POST: Events/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,PictureUrl")] Event @event, int[] tags, int[] organizers)
         {
+           
             Place place = _context.Places.Include(pt => pt.PlaceType).Include(c => c.City).ThenInclude(c => c.Country).FirstOrDefault(p => p.Id == @event.PlaceId);
             @event.Place = place;
             ModelState.Clear();
-            TryValidateModel(place);
+            TryValidateModel(@event);
 
             if (id != @event.Id)
             {
@@ -199,6 +210,7 @@ namespace EventOrganizerInfrastructure.Controllers
                     }
 
                     existingEvent.PlaceId = @event.PlaceId;
+                    
                     existingEvent.Title = @event.Title;
                     existingEvent.Description = @event.Description;
                     existingEvent.Speaker = @event.Speaker;

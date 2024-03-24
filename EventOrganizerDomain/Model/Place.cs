@@ -21,7 +21,22 @@ public partial class Place : Entity
     public string? AddressLine2 { get; set; }
 
     public string? Zip { get; set; }
-
+    public string Address
+    {
+        get
+        {
+            string address = AddressLine1 ?? "";
+            if (!string.IsNullOrEmpty(AddressLine2))
+            {
+                address += ", " + AddressLine2;
+            }
+            if (!string.IsNullOrEmpty(UnitNumber))
+            {
+                address += ", " + UnitNumber;
+            }
+            return address;
+        }
+    }
     public Geometry? CoordinatesCol1 { get; set; }
 
     public string? CoordinatesCol2 { get; set; }
