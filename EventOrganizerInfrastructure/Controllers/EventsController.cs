@@ -144,6 +144,8 @@ namespace EventOrganizerInfrastructure.Controllers
                 .Include(e => e.Place)
                     .ThenInclude(e=>e.City)
                         .ThenInclude(e=>e.Country)
+                .Include(e => e.Place)
+                    .ThenInclude(pt => pt.PlaceType)
                 .Include(e => e.Organizers)
                     .ThenInclude(oe => oe.Role)
                 .Include(e => e.Tags)
@@ -153,14 +155,15 @@ namespace EventOrganizerInfrastructure.Controllers
             {
                 return NotFound();
             }
-
+            
+            
             var allOrganizers = await _context.Users.Where(u => u.Role.Name.ToLower() == "organizer").ToListAsync();
             var allTags = await _context.Tags.ToListAsync();
 
             var selectedOrganizers = @event.Organizers.Select(o => o.Id).ToArray();
             var selectedTags = @event.Tags.Select(t => t.Id).ToArray();
 
-            ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
+            //ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
             ViewData["TagId"] = new MultiSelectList(allTags, "Id", "Title", selectedTags);
             ViewData["OrganizerId"] = new MultiSelectList(allOrganizers, "Id", "OrganizationOrFullName", selectedOrganizers);
             

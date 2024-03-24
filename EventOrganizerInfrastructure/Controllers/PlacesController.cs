@@ -7,17 +7,68 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EventOrganizerDomain.Model;
 using EventOrganizerInfrastructure;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EventOrganizerInfrastructure.Controllers
 {
     public class PlacesController : Controller
     {
         private readonly DbeventOrganizerContext _context;
-
+        private readonly JsonSerializerOptions _jsonOptions;
         public PlacesController(DbeventOrganizerContext context)
         {
             _context = context;
+            _jsonOptions = new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
+            };
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCountries()
+        {
+            var countries = await _context.Countries.ToListAsync();
+            return Json(countries);
+        }
+        
+
+        [HttpGet]
+        public async Task<IActionResult> GetCitiesInCountry(int countryId)
+        {
+            var cities = await _context.Cities.Where(c => c.CountryId == countryId).ToListAsync();
+            return Json(cities);
+        }
+        
+        public IActionResult PlacesInCity(int cityId)
+        {
+            var places = _context.Places.Where(p => p.CityId == cityId).ToList();
+            return PartialView("_PlaceList", places);
+        }        
+        public IActionResult PlacesOnline()
+        {
+            var places = _context.Places.Where(p => p.PlaceType.Name.ToLower() == "online").ToList();
+            return PartialView("_PlaceList", places);
+        }
+
+        //// Действие для загрузки списка мест по идентификатору города
+        //[HttpGet]
+        //public async Task<IActionResult> GetPlacesInCity(int cityId)
+        //{
+        //    try
+        //    {
+        //        var places = await _context.Places
+        //            .Where(p => p.CityId == cityId)
+        //            .ToListAsync();
+
+        //        return PartialView("_PlaceList", places);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false,error = ex.Message });
+        //    }
+        //}
 
         // GET: Places
         public async Task<IActionResult> Index(int? id)
@@ -26,7 +77,7 @@ namespace EventOrganizerInfrastructure.Controllers
 
             ViewBag.CityId = id;
 
-            var city = await _context.Cities.FindAsync(id);           
+            var city = await _context.Cities.FindAsync(id);
             if (city == null)
             {
                 return NotFound();
@@ -72,7 +123,7 @@ namespace EventOrganizerInfrastructure.Controllers
                 .Include(p => p.Events)
                     .ThenInclude(o => o.Organizers)
                 .Include(o => o.Events)
-                    .ThenInclude(t => t.Tags)               
+                    .ThenInclude(t => t.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (place == null)
             {

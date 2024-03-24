@@ -1,0 +1,9 @@
+﻿@model IEnumerable<EventOrganizerDomain.Model.Place>
+
+<select id="place" name="PlaceId">
+    <option value="">Оберіть місце</option>
+    @foreach (var place in Model)
+    {
+        <option value="@place.Id">@place.Name</option>
+    }
+</select>
