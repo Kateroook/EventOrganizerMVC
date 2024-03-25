@@ -12,10 +12,36 @@
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PlaceId" class="control-label">Місце</label>
-                <select asp-for="PlaceId" class ="form-control" asp-items="ViewBag.PlaceId"></select>
+            <label>Тип місця проведення:</label>
+            <select id="placeType" class="form-control">
+                <option value="">Оберіть тип місця</option>
+                <option value="online">Онлайн</option>
+                <option value="offline">Офлайн</option>
+            </select>
+
+            <!-- Вибір країни, міста та місця офлайн -->
+            <div id="offlineFields" style="display:none;">
+                <label>Країна:</label>
+                <select id="country" class="form-control"></select>
+                <br />
+                <label>Місто:</label>
+                <select id="city" class="form-control"></select>
+                <br />
+                <label>Місце:</label>
+                <select id="place" name="PlaceId" class="form-control"></select>
             </div>
+
+            <!-- Вибір онлайн місця -->
+
+            <div id="onlineFields" style="display:none;">
+                <label>Місце в онлайні:</label>
+                <select id="onlinePlaces" name="PlaceId" class="form-control"></select>
+
+            </div>
+
+            <input type="hidden" id="getCountriesUrl" value="@Url.Action("GetCountries", "Places")" />
+            <input type="hidden" id="getCitiesInCountryUrl" value="@Url.Action("GetCitiesInCountry", "Places")" />
+
             <div class="form-group">
                 <label asp-for="Title" class="control-label">Назва</label>
                 <input asp-for="Title" class="form-control" />
@@ -86,6 +112,12 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
+    <script src="~/js/placeSelector.js" async></script>
+    <script>
+        $(document).ready(function () {
+            const placeSelector = new PlaceSelector();
+        });
+    </script>
     <script>
         function readImageUrl(input) {
             var imageUrl = input.value;

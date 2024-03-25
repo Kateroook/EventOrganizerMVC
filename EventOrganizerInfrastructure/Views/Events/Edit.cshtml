@@ -16,14 +16,16 @@
         <div class="col-md-">
             <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                
                 <label>Тип місця проведення:</label>
                 <select id="placeType" class="form-control">
-                    <option value=""></option>
+                    <option value="">Оберіть тип місця</option>
                     <option value="online">Онлайн</option>
                     <option value="offline">Офлайн</option>
                 </select>
 
-                <!-- Элементы выбора страны, города и места проведения -->
+                <!-- Вибір країни, міста та місця офлайн -->
                 <div id="offlineFields" style="display:none;">
                     <label>Країна:</label>
                     <select id="country" class="form-control"></select>
@@ -35,10 +37,17 @@
                     <select id="place" name="PlaceId" class="form-control"></select>
                 </div>
 
+                <!-- Вибір онлайн місця -->
+
                 <div id="onlineFields" style="display:none;">
                     <label>Місце в онлайні:</label>
-                    <select id="onlinePlaces" name="PlaceId" class="form-control"></select>
+                    <select id="onlinePlaces" name="PlaceId" class="form-control"></select>        
+                    
                 </div>
+
+                    <input type="hidden" id="getCountriesUrl" value="@Url.Action("GetCountries", "Places")" />
+                    <input type="hidden" id="getCitiesInCountryUrl" value="@Url.Action("GetCitiesInCountry", "Places")" />
+
 
                 <div class="form-group">
                     <label asp-for="Organizers" class="control-label">Організатори</label>
@@ -98,6 +107,9 @@
                 </div>
             </form>
         </div>
+        
+
+
     </div>
 </div>
 <div>
@@ -112,55 +124,11 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script src="~/js/placeSelector.js" async></script>
     <script>
         $(document).ready(function () {
-            $('#placeType').change(function () {
-                var placeType = $(this).val();
-
-                if (placeType === 'online') {
-                    $('#onlineFields').show();
-                    $('#offlineFields').hide();
-
-                    $.get("/Places/PlacesOnline", function (data) {
-                        $('#onlinePlaces').html(data);
-                    });
-
-                } else {
-                    $('#offlineFields').show();
-                    $('#onlineFields').hide();
-
-                    // Загрузка списку країн з бд
-                    $.getJSON('@Url.Action("GetCountries", "Places")', function (data) {
-                        var items = '<option value="">Оберіть країну</option>';
-                        $.each(data, function (i, country) {
-                            items += '<option value="' + country.id + '">' + country.name + '</option>';
-                        });
-                        $('#country').html(items);
-                    });
-                }
-            });
-
-            // Вибір країни
-            $('#country').change(function () {
-                var countryId = $(this).val();
-
-                // Загрузка списку міст з бази даних
-                $.getJSON('@Url.Action("GetCitiesInCountry", "Places")', { countryId: countryId }, function (data) {
-                    var items = '<option value="">Оберіть місто</option>';
-                    $.each(data, function (i, city) {
-                        items += '<option value="' + city.id + '">' + city.name + '</option>';
-                    });
-                    $('#city').html(items);
-                });
-            });
-
-            $('#city').change(function () {
-                var cityId = $(this).val();
-                // AJAX запрос для заповнення списку з місць у місті
-                $.get("/Places/PlacesInCity?cityId=" + cityId, function (data) {
-                    $('#place').html(data);
-                });
-            });
+            const placeSelector = new PlaceSelector();
         });
     </script>
 
