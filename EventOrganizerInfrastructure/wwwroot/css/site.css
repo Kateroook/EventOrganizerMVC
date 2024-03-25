@@ -59,14 +59,14 @@ html {
 
 body {
     margin-bottom: 60px;
-    //margin: 170px;
+    
     color: #000;
     font-family: Arial, sans-serif;
     //font-family: robotoregular, Roboto, Arial, Helvetica, sans-serif;
     font-size: 16px;
     height: 100%;
     line-height: 1.42;
-   // background-color: #f8f9fa;
+   
     color: #212529;
 }
 
@@ -122,7 +122,8 @@ body {
 
 
 .card-img-top {
-    height: 200px;
+    min-height: 200px;
+    
     object-fit: cover;
 }
 .card-body {
@@ -189,7 +190,6 @@ body {
 }
 
 .event-price {
-   /*font-weight: bold; */ 
     color: #000;
 }
 

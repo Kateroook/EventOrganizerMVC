@@ -52,23 +52,6 @@ namespace EventOrganizerInfrastructure.Controllers
             return PartialView("_PlaceList", places);
         }
 
-        //// Действие для загрузки списка мест по идентификатору города
-        //[HttpGet]
-        //public async Task<IActionResult> GetPlacesInCity(int cityId)
-        //{
-        //    try
-        //    {
-        //        var places = await _context.Places
-        //            .Where(p => p.CityId == cityId)
-        //            .ToListAsync();
-
-        //        return PartialView("_PlaceList", places);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false,error = ex.Message });
-        //    }
-        //}
 
         // GET: Places
         public async Task<IActionResult> Index(int? id)

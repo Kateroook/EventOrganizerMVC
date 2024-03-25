@@ -96,6 +96,12 @@ namespace EventOrganizerInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CountryId,Name,Id")] City city)
         {
+
+            Country country = await _context.Countries.FindAsync(city.CountryId);
+            city.Country = country;
+            ModelState.Clear();
+            TryValidateModel(city);
+
             if (id != city.Id)
             {
                 return NotFound();
@@ -105,7 +111,15 @@ namespace EventOrganizerInfrastructure.Controllers
             {
                 try
                 {
-                    _context.Update(city);
+                    var cityToUpdate = await _context.Cities.FindAsync(id);
+                    if (cityToUpdate == null)
+                    {
+                        return NotFound();
+                    }                    
+                    cityToUpdate.CountryId = city.CountryId;
+                    cityToUpdate.Name = city.Name;
+
+                    _context.Update(cityToUpdate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

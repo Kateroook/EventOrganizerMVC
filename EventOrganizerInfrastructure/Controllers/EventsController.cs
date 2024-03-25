@@ -187,7 +187,6 @@ namespace EventOrganizerInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,PlaceId,Title,Description,Speaker,DateTimeStart,DateTimeEnd,Price,Capacity,PictureUrl")] Event @event, int[] tags, int[] organizers)
         {
-           
             Place place = _context.Places.Include(pt => pt.PlaceType).Include(c => c.City).ThenInclude(c => c.Country).FirstOrDefault(p => p.Id == @event.PlaceId);
             @event.Place = place;
             ModelState.Clear();
