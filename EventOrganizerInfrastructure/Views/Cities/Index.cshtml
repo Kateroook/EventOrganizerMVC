@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<EventOrganizerDomain.Model.City>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Міста";
 }
 
 <h1>Міста</h1>
@@ -32,7 +32,7 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Місця в цьому місті</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Події в цьому місті</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
             </td>
         </tr>
