@@ -7,29 +7,89 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EventOrganizerDomain.Model;
 using EventOrganizerInfrastructure;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EventOrganizerInfrastructure.Controllers
 {
     public class PlacesController : Controller
     {
         private readonly DbeventOrganizerContext _context;
-
+        private readonly JsonSerializerOptions _jsonOptions;
         public PlacesController(DbeventOrganizerContext context)
         {
             _context = context;
+            _jsonOptions = new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
+            };
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetCountries()
+        {
+            var countries = await _context.Countries.ToListAsync();
+            return Json(countries);
+        }
+        
+
+        [HttpGet]
+        public async Task<IActionResult> GetCitiesInCountry(int countryId)
+        {
+            var cities = await _context.Cities.Where(c => c.CountryId == countryId).ToListAsync();
+            return Json(cities);
+        }
+        
+        public IActionResult PlacesInCity(int cityId)
+        {
+            var places = _context.Places.Where(p => p.CityId == cityId).ToList();
+            return PartialView("_PlaceList", places);
+        }        
+        public IActionResult PlacesOnline()
+        {
+            var places = _context.Places.Where(p => p.PlaceType.Name.ToLower() == "online").ToList();
+            return PartialView("_PlaceList", places);
+        }
+
+
         // GET: Places
-        public async Task<IActionResult> Index(int? id, string? name, string? country)
+        public async Task<IActionResult> Index(int? id)
         {
             if (id == null) return RedirectToAction("Cities", "Index");
 
             ViewBag.CityId = id;
-            ViewBag.CountryId = country;
-            ViewBag.CityName = name;
-            var placeByCity = _context.Places.Where(p => p.CityId == id).Include(p => p.City).Include(p => p.PlaceType);
-            return View(await placeByCity.ToListAsync());
+
+            var city = await _context.Cities.FindAsync(id);
+            if (city == null)
+            {
+                return NotFound();
+            }
+            ViewBag.CityName = city.Name;
+
+            var popularCities = await _context.Cities.OrderByDescending(c => c.Places.Count).Take(5).ToListAsync();
+            ViewBag.PopularCities = popularCities;
+
+
+            var popularEventsInCity = await _context.Events
+                .Where(e => e.Place.CityId == id)
+                .OrderByDescending(e => e.Registrations.Count)
+                .Take(5)
+                .ToListAsync();
+
+            ViewBag.PopularEventsInCity = popularEventsInCity;
+
+            var placesInCity = await _context.Places
+                .Where(p => p.CityId == id)
+                .Include(p => p.City)
+                    .ThenInclude(p => p.Country)
+                .Include(p => p.PlaceType)
+                .Include(p => p.Events)
+                .ToListAsync();
+
+            return View(placesInCity);
         }
+
 
         // GET: Places/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -41,7 +101,12 @@ namespace EventOrganizerInfrastructure.Controllers
 
             var place = await _context.Places
                 .Include(p => p.City)
+                .ThenInclude(p => p.Country)
                 .Include(p => p.PlaceType)
+                .Include(p => p.Events)
+                    .ThenInclude(o => o.Organizers)
+                .Include(o => o.Events)
+                    .ThenInclude(t => t.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (place == null)
             {

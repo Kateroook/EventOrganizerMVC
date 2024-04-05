@@ -1,78 +1,66 @@
 ﻿@model EventOrganizerDomain.Model.Event
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Про подію";
 }
 
-<h1>Details</h1>
+<div class="event-details-container">
+    @if (!string.IsNullOrEmpty(Model.PictureUrl))
+    {
+        <div class="event-image" style="background-image: url('@Model.PictureUrl')"></div>
+    }
 
-<div>
-    <h4>Event</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Speaker)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Speaker)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateTimeStart)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateTimeStart)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateTimeEnd)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateTimeEnd)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Capacity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Capacity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastUpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastUpdatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Place)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Place.Name)
-        </dd>
-    </dl>
+    <div class="event-info">
+        <h1>@Model.Title</h1>
+        <p>@Model.Description</p>
+        @if (!string.IsNullOrEmpty(Model.Speaker))
+        {
+            <strong>Speaker:</strong> @Model.Speaker
+
+            <br />
+        }
+        <p><strong>Дата:</strong> @Model.DateTimeStart.ToString("dd MMMM yyyy, HH:mm, ddd") - @Model.DateTimeEnd.ToString("HH:mm, ddd")</p>
+        <p><strong>Ціна:</strong> @if (Model.Price.HasValue && Model.Price.Value != 0)
+            {
+                @Model.Price
+            }
+            else
+            {
+                <span class="text-success">FREE</span>
+            }</p>
+        <p><strong>Кількість місць:</strong> @Model.Capacity</p>
+        <p><strong>Створено:</strong> @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
+        <p><strong>Оновлено в останній раз:</strong> @Model.LastUpdatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
+        <p>
+            <strong>Місце:</strong> <a asp-controller="Places" asp-action="Details" asp-route-id="@Model.Place.Id">@Model.Place.Name</a>
+            @if(Model.Place.Name != "online")
+            {
+                <span>@Model.Place.AddressLine1 @Model.Place.AddressLine2, @Model.Place.City.Name</span>
+            }
+            
+            <br />
+            
+        </p>
+
+        <div class="organizers">
+            <h4>Organizers:</h4>
+            @foreach (var organizer in Model.Organizers)
+            {
+                <span>@organizer.OrganizationOrFullName</span>
+            }
+        </div>
+
+        <div class="tags">
+            <h4>Tags:</h4>
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="tag">@tag.Title</span>
+            }
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="action-links">
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Редагувати</a>
+    <a asp-action="Index" class="btn btn-secondary">До дошки оголошень</a>
 </div>
