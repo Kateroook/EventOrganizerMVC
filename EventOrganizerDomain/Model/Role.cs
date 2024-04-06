@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace EventOrganizerDomain.Model;
 
-public partial class Role : Entity
+public partial class Role : IdentityRole<int>
 {
 
     public string Name { get; set; } = null!;

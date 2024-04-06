@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Microsoft.AspNetCore.Identity;
 namespace EventOrganizerDomain.Model;
 
-public partial class User : Entity
+public partial class User : IdentityUser<int>
 {
 
     public int RoleId { get; set; }

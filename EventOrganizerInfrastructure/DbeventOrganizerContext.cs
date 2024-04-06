@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using EventOrganizerDomain.Model;
 using EventOrganizerInfrastructure.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace EventOrganizerInfrastructure;
 
-public partial class DbeventOrganizerContext : DbContext
+public partial class DbeventOrganizerContext : IdentityDbContext <User,Role,int>
 {
     public DbeventOrganizerContext()
     {
@@ -28,7 +30,6 @@ public partial class DbeventOrganizerContext : DbContext
     public virtual DbSet<Place> Places { get; set; }
 
     public virtual DbSet<PlaceType> PlaceTypes { get; set; }
-
     public virtual DbSet<Registration> Registrations { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
@@ -43,6 +44,12 @@ public partial class DbeventOrganizerContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<IdentityUserRole<int>>().HasKey(ur => new { ur.UserId, ur.RoleId });
+        modelBuilder.Entity<IdentityUserLogin<int>>().HasKey(l => new { l.LoginProvider, l.ProviderKey });
+        modelBuilder.Entity<IdentityUserClaim<int>>().HasKey(c => c.Id);
+        modelBuilder.Entity<IdentityRoleClaim<int>>().HasKey(rc => rc.Id);
+        modelBuilder.Entity<IdentityUserToken<int>>().HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
+        
         modelBuilder.ApplyConfiguration(new CityEntityTypeConfiguration());
         //modelBuilder.Entity<City>(entity =>
         //{

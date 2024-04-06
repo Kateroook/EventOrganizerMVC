@@ -2,6 +2,7 @@ using EventOrganizerDomain.Model;
 using EventOrganizerInfrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using Microsoft.Extensions.Configuration;
 
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("uk-UA");
 Thread.CurrentThread.CurrentCulture = CultureInfo.DefaultThreadCurrentCulture;
@@ -11,7 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<DbeventOrganizerContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<DbeventOrganizerContext>(option => 
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<User, Role>(options =>
+    options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<DbeventOrganizerContext>();
 
 var app = builder.Build();
 
@@ -28,6 +34,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
