@@ -29,7 +29,7 @@ namespace EventOrganizerInfrastructure.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email };
+                User user = new User { Email = model.Email, UserName = model.Email, RegistrationDate = DateOnly.FromDateTime(DateTime.Today)};
                 // додаємо користувача
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -52,27 +52,23 @@ namespace EventOrganizerInfrastructure.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
-            if (!Url.IsLocalUrl(returnUrl))
-            {
-                returnUrl = string.Empty;
-            }
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var result =
-                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    // перевіряємо, чи належить URL додатку
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
-                        return Redirect(model.ReturnUrl);
+                        return Redirect(returnUrl);
                     }
                     else
                     {
@@ -81,9 +77,11 @@ namespace EventOrganizerInfrastructure.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Неправильний логін чи (та) пароль");
+                    ModelState.AddModelError(string.Empty, "Неправильный логин или пароль");
+                    return View(model);
                 }
             }
+
             return View(model);
         }
 

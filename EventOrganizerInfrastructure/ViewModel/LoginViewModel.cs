@@ -4,8 +4,7 @@ namespace EventOrganizerInfrastructure.ViewModel
 {
     public class LoginViewModel
     {
-        private string returnUrl;
-
+ 
         [Required]
         [Display(Name ="Email")]
         public string Email { get; set; }
@@ -17,6 +16,5 @@ namespace EventOrganizerInfrastructure.ViewModel
 
         [Display(Name ="Запам`ятати?")]
         public bool RememberMe { get; set; }
-        public string ReturnUrl { get => returnUrl; set => returnUrl = value; }
     }
 }

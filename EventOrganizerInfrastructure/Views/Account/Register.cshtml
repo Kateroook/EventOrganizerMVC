@@ -1,25 +1,29 @@
 ﻿@model EventOrganizerInfrastructure.ViewModel.RegisterViewModel
 
-<h2>Реєстрація нового користувача</h2>
-<form method="post" asp-controller="Account" asp-action="Register">
-    <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Email"></label><br />
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
+<h2>Реєстрація</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Register" asp-controller="Account" method="post" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PasswordConfirmed" class="control-label"></label>
+                <input asp-for="PasswordConfirmed" class="form-control" />
+                <span asp-validation-for="PasswordConfirmed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Зареєсттруватися</button>
+            </div>
+        </form>
     </div>
-
-    <div>
-        <label asp-for="Password"></label><br />
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <div>
-        <label asp-for="PasswordConfirmed"></label><br />
-        <input asp-for="PasswordConfirmed" />
-        <span asp-validation-for="PasswordConfirmed"></span>
-    </div>
-    <div>
-        <input type="submit" value="Реєстрація" />
-    </div>
-</form>
+</div>
