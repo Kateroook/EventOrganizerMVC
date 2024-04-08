@@ -7,8 +7,8 @@ namespace EventOrganizerDomain.Model;
 
 public partial class User : IdentityUser<int>
 {
-    [Display(Name ="Роль")]
-    public int RoleId { get; set; }
+    //[Display(Name ="Роль")]
+    //public int RoleId { get; set; }
 
     [Display(Name ="Ім'я")]
     public string? FirstName { get; set; } = string.Empty;
@@ -24,11 +24,8 @@ public partial class User : IdentityUser<int>
 
     public string OrganizationOrFullName => string.IsNullOrEmpty(OrganizationName) ? FullName : string.IsNullOrEmpty(LastName) ? OrganizationName : $"{FullName} ({OrganizationName})";
     
-    [Display(Name = "Email")]
-    public string Email { get; set; }
-
     [Display(Name = "Пароль")]
-    public string Password { get; set; } = null;
+    public string? Password { get; set; }
 
     [Display(Name = "Опис")]
     public string? Info { get; set; }
@@ -37,7 +34,8 @@ public partial class User : IdentityUser<int>
     public DateOnly RegistrationDate { get; set; }
 
 
-    public virtual Role Role { get; set; } = null!;
+    //public virtual Role Role { get; set; } = null!;
+    public virtual ICollection<IdentityUserRole<int>> Roles { get; set; }
     public virtual ICollection<Comment> Comments { get; set; }
     public virtual ICollection<Registration> Registrations { get; set; }
     public virtual ICollection<Event> Events { get; set; } 

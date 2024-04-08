@@ -77,7 +77,7 @@ namespace EventOrganizerInfrastructure.Controllers
         {
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name");
             ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title");
-            ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName");
+            //ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName");
 
             return View();
         }
@@ -126,7 +126,7 @@ namespace EventOrganizerInfrastructure.Controllers
 
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
             ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title", @event.Tags);
-            ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
+            //ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
 
             return View(@event);
         }
@@ -147,7 +147,7 @@ namespace EventOrganizerInfrastructure.Controllers
                 .Include(e => e.Place)
                     .ThenInclude(pt => pt.PlaceType)
                 .Include(e => e.Organizers)
-                    .ThenInclude(oe => oe.Role)
+                   // .ThenInclude(oe => oe.Role)
                 .Include(e => e.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -157,7 +157,7 @@ namespace EventOrganizerInfrastructure.Controllers
             }
             
             
-            var allOrganizers = await _context.Users.Where(u => u.Role.Name.ToLower() == "organizer").ToListAsync();
+            //var allOrganizers = await _context.Users.Where(u => u.Role.Name.ToLower() == "organizer").ToListAsync();
             var allTags = await _context.Tags.ToListAsync();
 
             var selectedOrganizers = @event.Organizers.Select(o => o.Id).ToArray();
@@ -165,7 +165,7 @@ namespace EventOrganizerInfrastructure.Controllers
 
             //ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
             ViewData["TagId"] = new MultiSelectList(allTags, "Id", "Title", selectedTags);
-            ViewData["OrganizerId"] = new MultiSelectList(allOrganizers, "Id", "OrganizationOrFullName", selectedOrganizers);
+            //ViewData["OrganizerId"] = new MultiSelectList(allOrganizers, "Id", "OrganizationOrFullName", selectedOrganizers);
             
             var countries = await _context.Countries.ToListAsync();
             ViewBag.Countries = new SelectList(countries, "Id", "Name");
@@ -265,7 +265,7 @@ namespace EventOrganizerInfrastructure.Controllers
 
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
             ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title", @event.Tags);
-            ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
+            //ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
 
             return View(@event);
         }

@@ -42,12 +42,40 @@ public partial class DbeventOrganizerContext : IdentityDbContext <User,Role,int>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<IdentityUserRole<int>>().HasKey(ur => new { ur.UserId, ur.RoleId });
-        modelBuilder.Entity<IdentityUserLogin<int>>().HasKey(l => new { l.LoginProvider, l.ProviderKey });
-        modelBuilder.Entity<IdentityUserClaim<int>>().HasKey(c => c.Id);
-        modelBuilder.Entity<IdentityRoleClaim<int>>().HasKey(rc => rc.Id);
-        modelBuilder.Entity<IdentityUserToken<int>>().HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
+        modelBuilder.Entity<IdentityUserRole<int>>(entity =>
+        {
+            entity.ToTable("UsersRoles");
+            entity.HasKey(ur => new { ur.UserId, ur.RoleId });
+            entity.Property(e => e.UserId).HasColumnName("UserId");
+            entity.Property(e => e.RoleId).HasColumnName("RoleId");    
+            
+        });
+
+        modelBuilder.Entity<IdentityUserLogin<int>>(entity =>
+        {
+            entity.ToTable("UsersLogins");
+            entity.HasKey(l => new { l.LoginProvider, l.ProviderKey });
+        });
+
+        modelBuilder.Entity<IdentityUserClaim<int>>(entity =>
+        {
+            entity.ToTable("UsersClaims");
+            entity.HasKey(c => c.Id);
+        });
+
+        modelBuilder.Entity<IdentityRoleClaim<int>>(entity =>
+        {
+            entity.ToTable("RolesClaims");
+            entity.HasKey(rc => rc.Id);
+        });
+
+        modelBuilder.Entity<IdentityUserToken<int>>(entity =>
+        {
+            entity.ToTable("UsersTokens");
+            entity.HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
+        });
         
+      
         modelBuilder.ApplyConfiguration(new CityEntityTypeConfiguration());
         //modelBuilder.Entity<City>(entity =>
         //{
@@ -195,7 +223,7 @@ public partial class DbeventOrganizerContext : IdentityDbContext <User,Role,int>
         modelBuilder.Entity<Role>(entity =>
         {
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                
                 .HasColumnName("ID");
             entity.Property(e => e.Description)
                 .HasMaxLength(500)
@@ -258,12 +286,12 @@ public partial class DbeventOrganizerContext : IdentityDbContext <User,Role,int>
             entity.Property(e => e.Password)
                 .HasMaxLength(128)
                 .IsUnicode(false);
-            entity.Property(e => e.RoleId).HasColumnName("RoleID");
+            //entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
-            entity.HasOne(d => d.Role).WithMany(p => p.Users)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Users_Roles");
+            //entity.HasOne(d => d.Role).WithMany(p => p.Users)
+            //    .HasForeignKey(d => d.RoleId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_Users_Roles");
 
             entity.HasMany(d => d.Events).WithMany(p => p.Organizers)
                 .UsingEntity<Dictionary<string, object>>(

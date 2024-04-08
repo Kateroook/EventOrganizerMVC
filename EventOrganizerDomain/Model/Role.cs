@@ -8,11 +8,20 @@ namespace EventOrganizerDomain.Model;
 public partial class Role : IdentityRole<int>
 {
 
-    [Display(Name="Роль")]
-    public string Name { get; set; } = null!;
+    public Role() : base()
+    {
+
+    }
+    public Role(string roleName) : this()
+    {
+        Name = roleName;
+    }
+
+    //[Display(Name="Роль")]
+    //public string Name { get; set; }
     
     [Display(Name ="Опис")]
-    public string? Description { get; set; }
-
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public string? Description { get; set; } = string.Empty;
+    public virtual ICollection<IdentityUserRole<int>> Users { get; set; }
+    //public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
