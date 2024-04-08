@@ -16,5 +16,7 @@ namespace EventOrganizerInfrastructure.ViewModel
 
         [Display(Name ="Запам`ятати?")]
         public bool RememberMe { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

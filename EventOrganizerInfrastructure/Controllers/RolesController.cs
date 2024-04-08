@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using EventOrganizerDomain.Model;
 using EventOrganizerInfrastructure.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 namespace EventOrganizerInfrastructure.Controllers
 {
+    [Authorize(Roles="Moderator")]
     public class RolesController : Controller
     {
         RoleManager<Role> _roleManager;

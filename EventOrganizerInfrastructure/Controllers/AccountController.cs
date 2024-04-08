@@ -50,34 +50,38 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+            public IActionResult Login(string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            // Если returnUrl пустой, попробуйте получить его из заголовка Referer
+            if (string.IsNullOrEmpty(returnUrl) && Request.Headers.ContainsKey("Referer"))
+            {
+                returnUrl = Request.Headers["Referer"];
+            }
+
+            // Передаем returnUrl в представление
+            return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        return Redirect(returnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                        return Redirect(model.ReturnUrl);
+                    }                  
+                    return RedirectToAction("Index", "Home");
+                    
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Неправильный логин или пароль");
+                    ModelState.AddModelError(string.Empty, "Неправильний логін або пароль");
                     return View(model);
                 }
             }
