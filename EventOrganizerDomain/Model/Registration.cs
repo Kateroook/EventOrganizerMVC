@@ -6,19 +6,16 @@ namespace EventOrganizerDomain.Model;
 
 public partial class Registration : Entity
 {
-    //public int Id { get; set; }
-
+    [Display(Name ="Учасник")]
     public int UserId { get; set; }
 
+    [Display(Name ="Подія")]
     public int EventId { get; set; }
 
-    [Display(Name ="Зареєствровано о")]
+    [Display(Name ="Зареєстровано")]
     public DateTime CreatedAt { get; set; }
 
-    [Display(Name ="Оновлнено о")]
-    public DateTime LastUpdatedAt { get; set; }
 
     public virtual Event Event { get; set; } = null!;
-
     public virtual User User { get; set; } = null!;
 }

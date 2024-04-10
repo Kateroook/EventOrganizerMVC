@@ -13,7 +13,7 @@
             @if (User.Identity.IsAuthenticated)
             {
                 <div class="text-center mt-3">
-                <p>Ви увійшли як: @User.Identity.Name</p>
+                <p>Привіт, @User.Identity.Name!</p>
                 <form method="post" asp-controller="Account" asp-action="Logout">
                     <button type="submit" class="btn btn-danger btn-block">Вихід</button>
                 </form>
@@ -23,7 +23,7 @@
             {
                 <div class="text-center">
                     <a class="btn btn-primary mr-2" asp-controller="Account" asp-action="Login">Увійти</a>
-                    <a class="btn btn-success" asp-controller="Account" asp-action="Register">Реєстрація</a>
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Реєстрація</a>
                 </div>
             }
         </div>

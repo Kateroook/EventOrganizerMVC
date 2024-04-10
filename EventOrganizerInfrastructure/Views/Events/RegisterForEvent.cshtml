@@ -1,0 +1,32 @@
+﻿@model EventOrganizerInfrastructure.ViewModel.RegisterForEventViewModel
+
+@{
+    ViewData["Title"] = "Реєстрація на подію";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="RegisterForEvent" method="post">
+    <input type="hidden" asp-for="EventId" value="@Model.EventId" />
+    <div class="form-group">
+        <label asp-for="FirstName">Ім'я:</label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName">Прізвище:</label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email">Електронна пошта:</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group form-check">
+        <input asp-for="AgreeToTerms" class="form-check-input" />
+        <label class="form-check-label" asp-for="AgreeToTerms">Я погоджуюся з правилами сервісу</label>
+        <span asp-validation-for="AgreeToTerms" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Підтвердити</button>
+</form>

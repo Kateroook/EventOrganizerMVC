@@ -11,6 +11,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 using NuGet.Packaging;
 using System.Drawing.Printing;
+using Microsoft.AspNetCore.Identity;
+using EventOrganizerInfrastructure.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace EventOrganizerInfrastructure.Controllers
 {
@@ -18,12 +22,16 @@ namespace EventOrganizerInfrastructure.Controllers
     {
         private readonly DbeventOrganizerContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
 
         private const int PageSize = 12;
-        public EventsController(DbeventOrganizerContext context, IWebHostEnvironment webHostEnvironment)
+        public EventsController(DbeventOrganizerContext context, IWebHostEnvironment webHostEnvironment, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: Events
@@ -328,5 +336,44 @@ namespace EventOrganizerInfrastructure.Controllers
             return _context.Events.Any(e => e.Id == id);
         }
 
+
+
+        [Authorize(Roles ="Participant")]
+        [HttpGet]
+        public IActionResult RegisterForEvent(int id)
+        {
+            var model = new RegisterForEventViewModel { EventId = id };
+            return View(model);
+        }
+
+
+        [Authorize(Roles = "Participant")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterForEvent(RegisterForEventViewModel model)
+        {
+            // Получаем текущего пользователя
+            var user = _userManager.GetUserId(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            Debug.WriteLine("EventID: ", model.EventId);
+
+            // Создаем запись о регистрации пользователя на событие
+            var registration = new Registration
+            {
+                UserId = int.Parse(user),
+                EventId = model.EventId,
+                CreatedAt = DateTime.Now,
+            };
+
+            // Добавляем запись в базу данных
+            _context.Registrations.Add(registration);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Events");
+        }
     }
 }

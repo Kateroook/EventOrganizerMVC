@@ -7,9 +7,6 @@ namespace EventOrganizerDomain.Model;
 
 public partial class User : IdentityUser<int>
 {
-    //[Display(Name ="Роль")]
-    //public int RoleId { get; set; }
-
     [Display(Name ="Ім'я")]
     public string? FirstName { get; set; } = string.Empty;
 
