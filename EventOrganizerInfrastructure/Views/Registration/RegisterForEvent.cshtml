@@ -5,6 +5,15 @@
 }
 
 <h2>@ViewData["Title"]</h2>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
 
 <form asp-action="RegisterForEvent" method="post">
     <input type="hidden" asp-for="EventId" value="@Model.EventId" />

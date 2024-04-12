@@ -338,57 +338,8 @@ namespace EventOrganizerInfrastructure.Controllers
 
 
 
-        [Authorize(Roles ="Participant")]
-        [HttpGet]
-        public IActionResult RegisterForEvent(int id)
-        {
-            var model = new RegisterForEventViewModel { EventId = id };
-            return View(model);
-        }
 
 
-        [Authorize(Roles = "Participant")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterForEvent(RegisterForEventViewModel model)
-        {
-            var eventName = _context.Events.FirstOrDefault(e => e.Id == model.EventId)?.Title;
-            var user = _userManager.GetUserId(User);
 
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            var existingRegistration = _context.Registrations.FirstOrDefault(r => r.UserId == int.Parse(user) && r.EventId == model.EventId);
-            if (existingRegistration != null)
-            {
-                
-                ModelState.AddModelError(string.Empty, "Вы уже зарегистрированы на это событие.");
-                //TempData["SuccessMessage"] = $"Ви вже зареєструвались на цю подію: \"{eventName}\"!";
-                 View(model);
-                return RedirectToAction("Index", "Events");
-            }
-
-            var registration = new Registration
-            {
-                UserId = int.Parse(user),
-                EventId = model.EventId,
-                CreatedAt = DateTime.Now,
-            };
-
-            _context.Registrations.Add(registration);
-            await _context.SaveChangesAsync();
-
-           
-            TempData["SuccessMessage"] = $"Ви успішно зареєструвались на подію: \"{eventName}\"!";
-
-            //return RedirectToAction("Index", "Events");
-            // Получение идентификатора зарегистрированного события
-            var eventId = model.EventId;
-
-            // Перенаправление на страницу деталей события
-            return RedirectToAction("Details", "Events", new { id = eventId });
-        }
     }
 }

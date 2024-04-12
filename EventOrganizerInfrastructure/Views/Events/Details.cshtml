@@ -73,5 +73,5 @@
 <div class="action-links">
     <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Редагувати</a>
     <a asp-action="Index" class="btn btn-secondary">До дошки оголошень</a>
-    <a asp-action="RegisterForEvent" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Зареєструватись</a>
+    <a asp-controller="Registration" asp-action="RegisterForEvent" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Зареєструватись</a>
 </div>
