@@ -4,6 +4,14 @@
     ViewData["Title"] = "Про подію";
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="event-details-container">
     @if (!string.IsNullOrEmpty(Model.PictureUrl))
     {
@@ -20,26 +28,28 @@
             <br />
         }
         <p><strong>Дата:</strong> @Model.DateTimeStart.ToString("dd MMMM yyyy, HH:mm, ddd") - @Model.DateTimeEnd.ToString("HH:mm, ddd")</p>
-        <p><strong>Ціна:</strong> @if (Model.Price.HasValue && Model.Price.Value != 0)
+        <p>
+            <strong>Ціна:</strong> @if (Model.Price.HasValue && Model.Price.Value != 0)
             {
                 @Model.Price
             }
             else
             {
                 <span class="text-success">FREE</span>
-            }</p>
+            }
+        </p>
         <p><strong>Кількість місць:</strong> @Model.Capacity</p>
         <p><strong>Створено:</strong> @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
         <p><strong>Оновлено в останній раз:</strong> @Model.LastUpdatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
         <p>
             <strong>Місце:</strong> <a asp-controller="Places" asp-action="Details" asp-route-id="@Model.Place.Id">@Model.Place.Name</a>
-            @if(Model.Place.Name != "online")
+            @if (Model.Place.Name != "online")
             {
                 <span>@Model.Place.AddressLine1 @Model.Place.AddressLine2, @Model.Place.City.Name</span>
             }
-            
+
             <br />
-            
+
         </p>
 
         <div class="organizers">
@@ -65,5 +75,3 @@
     <a asp-action="Index" class="btn btn-secondary">До дошки оголошень</a>
     <a asp-action="RegisterForEvent" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Зареєструватись</a>
 </div>
-
-

@@ -46,29 +46,29 @@
                                 </span>
                             </p>
                             <p class="card-text  event-price">
-                            @if (e.Price.HasValue && e.Price.Value != 0)
-                            {
-                                <strong>від @e.Price₴</strong>
-                            }
-                            else
-                            {
-                                <strong>FREE</strong>
-                            }
+                                @if (e.Price.HasValue && e.Price.Value != 0)
+                                {
+                                    <strong>від @e.Price₴</strong>
+                                }
+                                else
+                                {
+                                    <strong>FREE</strong>
+                                }
                             </p>
                         </div>
-                        
+
                     </div>
                     <div class="card-bottom card-buttons">
                         <a asp-action="Details" asp-route-id="@e.Id" class="btn btn-primary btn-details">Деталі</a>
-                        <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-secondary btn-delete">Видалити</a>                        
+                        <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-secondary btn-delete">Видалити</a>
                     </div>
-                  
+
                 </div>
 
-            </div>                
+            </div>
 
-        }           
-    </div> 
+        }
+    </div>
 
 </div>
 

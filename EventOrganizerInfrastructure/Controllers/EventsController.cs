@@ -352,16 +352,24 @@ namespace EventOrganizerInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterForEvent(RegisterForEventViewModel model)
         {
-            // Получаем текущего пользователя
+            var eventName = _context.Events.FirstOrDefault(e => e.Id == model.EventId)?.Title;
             var user = _userManager.GetUserId(User);
+
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            Debug.WriteLine("EventID: ", model.EventId);
+            var existingRegistration = _context.Registrations.FirstOrDefault(r => r.UserId == int.Parse(user) && r.EventId == model.EventId);
+            if (existingRegistration != null)
+            {
+                
+                ModelState.AddModelError(string.Empty, "Вы уже зарегистрированы на это событие.");
+                //TempData["SuccessMessage"] = $"Ви вже зареєструвались на цю подію: \"{eventName}\"!";
+                 View(model);
+                return RedirectToAction("Index", "Events");
+            }
 
-            // Создаем запись о регистрации пользователя на событие
             var registration = new Registration
             {
                 UserId = int.Parse(user),
@@ -369,11 +377,18 @@ namespace EventOrganizerInfrastructure.Controllers
                 CreatedAt = DateTime.Now,
             };
 
-            // Добавляем запись в базу данных
             _context.Registrations.Add(registration);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Events");
+           
+            TempData["SuccessMessage"] = $"Ви успішно зареєструвались на подію: \"{eventName}\"!";
+
+            //return RedirectToAction("Index", "Events");
+            // Получение идентификатора зарегистрированного события
+            var eventId = model.EventId;
+
+            // Перенаправление на страницу деталей события
+            return RedirectToAction("Details", "Events", new { id = eventId });
         }
     }
 }
