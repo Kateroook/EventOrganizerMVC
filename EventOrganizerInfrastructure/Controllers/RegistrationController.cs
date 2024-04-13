@@ -21,6 +21,20 @@ namespace EventOrganizerInfrastructure.Controllers
             _roleManager = roleManager;
         }
 
+        public IActionResult Index()
+        {
+            var userId = int.Parse(_userManager.GetUserId(User));
+
+            
+            var registrations = _context.Registrations
+                .Include(r => r.Event)
+                .Where(r => r.UserId == userId)
+                .ToList();
+
+            return View(registrations);
+        }
+
+
         [HttpGet]
         public IActionResult RegisterForEvent(int id)
         {
@@ -67,5 +81,23 @@ namespace EventOrganizerInfrastructure.Controllers
 
             return RedirectToAction("Details", "Events", new { id = eventId });
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelRegistration(int registrationId)
+        {
+            var registration = await _context.Registrations.FindAsync(registrationId);
+
+            if (registration == null)
+            {
+                return NotFound();
+            }
+
+            _context.Registrations.Remove(registration);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

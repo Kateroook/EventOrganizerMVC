@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Name"] - RythMe</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" type="text/css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" type="text/css" />
     <link rel="stylesheet" href="~/EventOrganizerInfrastructure.styles.css" asp-append-version="true" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
 
@@ -27,10 +27,17 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Про сайт</a>
-                        </li>                        
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Events" asp-action="Index">Події</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Participant"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Registration" asp-action="Index">Мої події</a>
+                            </li>
+                        }
+
                     </ul>
                 </div>
             </div>
