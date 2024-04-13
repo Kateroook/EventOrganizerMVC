@@ -81,10 +81,23 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         // GET: Events/Create
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name");
             ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title");
+            var organizers =  await _userManager.GetUsersInRoleAsync("Organizer");
+            // Формируем список организаторов для передачи в представление
+            var organizerList = organizers.Select(o => new SelectListItem
+            {
+                Value = o.Id.ToString(),
+                Text = o.OrganizationOrFullName // Или любое другое поле, которое вы хотите отобразить
+            }).ToList();
+
+            // Передаем список организаторов в представление
+            ViewData["OrganizerId"] = organizerList;
+            // Передаем список организаторов в представление
+            //ViewData["OrganizerId"] = new SelectList(organizers, "Id", "OrganizationOrFullName");
+
             //ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName");
 
             return View();
@@ -155,7 +168,6 @@ namespace EventOrganizerInfrastructure.Controllers
                 .Include(e => e.Place)
                     .ThenInclude(pt => pt.PlaceType)
                 .Include(e => e.Organizers)
-                   // .ThenInclude(oe => oe.Role)
                 .Include(e => e.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -165,20 +177,30 @@ namespace EventOrganizerInfrastructure.Controllers
             }
             
             
-            //var allOrganizers = await _context.Users.Where(u => u.Role.Name.ToLower() == "organizer").ToListAsync();
-            var allTags = await _context.Tags.ToListAsync();
+            var allTags = _context.Tags.ToList();
 
-            var selectedOrganizers = @event.Organizers.Select(o => o.Id).ToArray();
-            var selectedTags = @event.Tags.Select(t => t.Id).ToArray();
+            // Поместите выбранные теги в ViewBag или ViewData
+            ViewBag.SelectedTags = @event.Tags.Select(t => t.Id).ToList();
+            //ViewBag.TagId = new SelectList(allTags, "Id", "Title");
 
-            //ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
-            ViewData["TagId"] = new MultiSelectList(allTags, "Id", "Title", selectedTags);
-            //ViewData["OrganizerId"] = new MultiSelectList(allOrganizers, "Id", "OrganizationOrFullName", selectedOrganizers);
+
+            ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
+            ViewData["TagId"] = new MultiSelectList(allTags, "Id", "Title");
+           
+            var organizers = await _userManager.GetUsersInRoleAsync("Organizer");
+            var organizerList = organizers.Select(o => new SelectListItem
+            {
+                Value = o.Id.ToString(),
+                Text = o.OrganizationOrFullName 
+            }).ToList();
             
+            ViewBag.SelectedOrganizers = @event.Organizers.Select(o => o.Id).ToList();
+
+            ViewData["OrganizerId"] = organizerList;
+
             var countries = await _context.Countries.ToListAsync();
             ViewBag.Countries = new SelectList(countries, "Id", "Name");
-
-         
+        
             var cities = await _context.Cities.ToListAsync();
             ViewBag.Cities = new SelectList(cities, "Id", "Name");
 
@@ -274,7 +296,16 @@ namespace EventOrganizerInfrastructure.Controllers
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
             ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title", @event.Tags);
             //ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
+            var organizerss = await _userManager.GetUsersInRoleAsync("Organizer");
+            // Формируем список организаторов для передачи в представление
+            var organizerList = organizerss.Select(o => new SelectListItem
+            {
+                Value = o.Id.ToString(),
+                Text = o.OrganizationOrFullName // Или любое другое поле, которое вы хотите отобразить
+            }).ToList();
 
+            // Передаем список организаторов в представление
+            ViewData["OrganizerId"] = organizerList;
             return View(@event);
         }
 
@@ -335,11 +366,5 @@ namespace EventOrganizerInfrastructure.Controllers
         {
             return _context.Events.Any(e => e.Id == id);
         }
-
-
-
-
-
-
     }
 }

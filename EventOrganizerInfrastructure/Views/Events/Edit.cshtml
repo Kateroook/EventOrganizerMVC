@@ -4,7 +4,6 @@
     ViewData["Title"] = "Редагування";
 }
 
-<h1>Edit</h1>
 
 <h3>Редагування події</h3>
 <hr />
@@ -34,15 +33,15 @@
                     <select id="city" class="form-control"></select>
                     <br />
                     <label>Місце:</label>
-                    <select id="place" name="PlaceId" class="form-control"></select>
+                    <select id="place" name="PlaceId" class="form-control" ></select>
                 </div>
 
                 <!-- Вибір онлайн місця -->
 
                 <div id="onlineFields" style="display:none;">
                     <label>Місце в онлайні:</label>
-                    <select id="onlinePlaces" name="PlaceId" class="form-control"></select>        
-                    
+                    <select id="onlinePlaces" name="PlaceId" class="form-control"></select>
+
                 </div>
 
                     <input type="hidden" id="getCountriesUrl" value="@Url.Action("GetCountries", "Places")" />
@@ -51,13 +50,14 @@
 
                 <div class="form-group">
                     <label asp-for="Organizers" class="control-label">Організатори</label>
-                    <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple">
-                    </select>
+                    <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple" id="organizersSelect"></select>
                 </div>
+
                 <div class="form-group">
                     <label asp-for="Tags" class="control-label">Теги</label>
-                    <select asp-for="Tags" class="form-control" asp-items="ViewBag.TagId" multiple="multiple"></select>
+                    <select asp-for="Tags" class="form-control" asp-items="ViewBag.TagId" multiple="multiple" id="tagsSelect"></select>
                 </div>
+
                 <div class="form-group">
                     <label asp-for="Title" class="control-label"></label>
                     <input asp-for="Title" class="form-control" />
@@ -103,7 +103,7 @@
                 </div>
                 <input type="hidden" asp-for="Id" />
                 <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <input type="submit" value="Зберегти" class="btn btn-primary" />
                 </div>
             </form>
         </div>
@@ -113,7 +113,7 @@
     </div>
 </div>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">До афіши подій</a>
 </div>
 
 
@@ -124,11 +124,23 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script src="~/js/placeSelector.js" async></script>
     <script>
         $(document).ready(function () {
             const placeSelector = new PlaceSelector();
+            $('#tagsSelect').select2();
+            $('#organizersSelect').select2();            
+
+            var selectedTags = [@Html.Raw(Json.Serialize(ViewBag.SelectedTags))];           
+            $('#tagsSelect').val(selectedTags);            
+            $('#tagsSelect').trigger('change');
+            
+            var selectedOrginazers = [@Html.Raw(Json.Serialize(ViewBag.SelectedOrganizers))];
+            $('#organizersSelect').val(selectedOrginazers);
+            $('#organizersSelect').trigger('change');
         });
     </script>
 
