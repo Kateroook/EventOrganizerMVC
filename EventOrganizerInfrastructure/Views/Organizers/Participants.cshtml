@@ -1,0 +1,31 @@
+﻿@model IEnumerable<EventOrganizerDomain.Model.User>
+<div class="page-header">
+    <h2>Учасники</h2>
+</div>
+
+<table class="table">
+    @if (Model.Any())
+    {
+        <tread>
+            <tr>
+                <th>Ім'я</th>
+                <th>Пошта</th>
+            </tr>
+        </tread>
+        <tbody>
+        @foreach (var participant in Model)
+        {
+            <tr>
+                    <td>@participant.FullName</td>
+                    <td>@participant.Email</td>
+
+            </tr>
+        }
+        </tbody>
+    }
+    else
+    {
+        <span>Поки ніхто не зареєструвався на вашу подію ;( </span>
+    }
+
+</table>

@@ -24,8 +24,7 @@ namespace EventOrganizerInfrastructure.Controllers
         public IActionResult Index()
         {
             var userId = int.Parse(_userManager.GetUserId(User));
-
-            
+          
             var registrations = _context.Registrations
                 .Include(r => r.Event)
                 .Where(r => r.UserId == userId)
@@ -33,7 +32,6 @@ namespace EventOrganizerInfrastructure.Controllers
 
             return View(registrations);
         }
-
 
         [HttpGet]
         public IActionResult RegisterForEvent(int id)

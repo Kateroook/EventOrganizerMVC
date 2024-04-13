@@ -36,6 +36,12 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Registration" asp-action="Index">Мої події</a>
                             </li>
+                        }                        
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Organizer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Organizers" asp-action="MyEvents">Мої події</a>
+                            </li>
                         }
 
                     </ul>
