@@ -21,7 +21,7 @@
                 <p><strong>Телефон:</strong> @Html.DisplayFor(model => model.PhoneNumber)</p>
                 <p><strong>Email:</strong> @Html.DisplayFor(model => model.ContactEmail)</p>
                 <p><strong>Веб-сторінка:</strong> <a href="@Html.DisplayFor(model => model.Website)">@Html.DisplayFor(model => model.Website)</a></p>
-                
+
             }
         </div>
     </div>
@@ -29,7 +29,9 @@
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редагувати</a>
         <a asp-action="Index" asp-route-id="@Model.CityId" class="btn btn-secondary">До інших місць</a>
     </div>
+
 </div>
+    <div class="container content" id="map" style="height: 400px;"></div>
 
 <div class="container сontent mt-4">
     <div class="block-header">
@@ -91,3 +93,58 @@
         }
     </div>
 </div>
+
+@section scripts {
+    <!-- Leaflet.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Карта -->
+    <script>
+
+        var coordinatesString = '@Model.CoordinatesCol2';
+        var geometryType = '@Model.CoordinatesCol1?.GeometryType';
+
+
+        if (coordinatesString) {
+
+            var map = L.map('map').setView([0, 0], 13);
+
+            // OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+
+            if (geometryType === 'Point') {
+                var coordinates = coordinatesString.substring(coordinatesString.indexOf("(") + 1, coordinatesString.indexOf(")")).split(' ');
+                var lat = parseFloat(coordinates[1]);
+                var lng = parseFloat(coordinates[0]);
+
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup('@Model.Name');
+
+                map.setView([lat, lng], 13);
+            }
+
+            if (geometryType === 'Polygon') {
+                var coordinatesArray = coordinatesString.match(/\d+\.\d+/g);
+
+                var polygonPoints = [];
+
+                for (var i = 0; i < coordinatesArray.length; i += 2) {
+                    var lat = parseFloat(coordinatesArray[i]);
+                    var lng = parseFloat(coordinatesArray[i + 1]);
+                    polygonPoints.push([lat, lng]);
+                }
+
+                L.polygon([polygonPoints]).addTo(map).bindPopup('@Model.Name');
+
+                var bounds = L.polygon([polygonPoints]).getBounds();
+                map.fitBounds(bounds);
+            }
+        }
+        else { document.getElementById('map').style.display = 'none'; }
+
+    </script>
+}
