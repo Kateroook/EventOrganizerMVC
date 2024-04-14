@@ -25,6 +25,7 @@ public partial class Event : Entity
 
     [Display(Name ="Доповідач")]
     public string? Speaker { get; set; }
+    
     [DataType(DataType.DateTime)]
     [DisplayFormat(DataFormatString = "{0:dd MMMM yyyy, HH:mm, ddd}", ApplyFormatInEditMode = false)]   
     public DateTime DateTimeStart { get; set; }

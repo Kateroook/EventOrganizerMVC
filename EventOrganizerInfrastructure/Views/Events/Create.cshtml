@@ -20,7 +20,7 @@
             </div>
                        
             <label>Тип місця проведення:</label>
-            <select id="placeType" class="form-control">
+            <select id="placeType" class="form-control" required>
                 <option value="">Оберіть тип місця</option>
                 <option value="online">Онлайн</option>
                 <option value="offline">Офлайн</option>
@@ -29,19 +29,21 @@
             <!-- Вибір країни, міста та місця офлайн -->
             <div id="offlineFields" style="display:none;">
                 <label>Країна:</label>
-                <select id="country" class="form-control"></select>
+                <select id="country" class="form-control" required></select>
                 <br />
                 <label>Місто:</label>
-                <select id="city" class="form-control"></select>
+                <select id="city" class="form-control" required></select>
                 <br />
                 <label>Місце:</label>
-                <select id="place" name="PlaceId" class="form-control" id="tagsSelect"></select>
+                <select id="place" name="PlaceId" class="form-control" id="tagsSelect" required></select>
+                <span asp-validation-for="PlaceId" class="text-danger"></span>
             </div>
 
             <!-- Вибір онлайн місця -->
             <div id="onlineFields" style="display:none;">
                 <label>Місце в онлайні:</label>
-                <select id="onlinePlaces" name="PlaceId" class="form-control" id="tagsSelect"></select>
+                <select id="onlinePlaces" name="PlaceId" class="form-control" id="tagsSelect" required></select>
+                <span asp-validation-for="PlaceId" class="text-danger"></span>
             </div>
             
             <input type="hidden" id="getCountriesUrl" value="@Url.Action("GetCountries", "Places")" />
@@ -50,7 +52,7 @@
 
             <div class="form-group">
                 <label asp-for="Organizers" class="control-label">Організатори</label>
-                <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple" id="tagsSelect">
+                <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple" id="tagsSelect" required>
                 </select>        
             </div>
             <div class="form-group">
