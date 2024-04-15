@@ -87,10 +87,8 @@ namespace EventOrganizerInfrastructure.Controllers
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name");
             ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title");
 
-            // Получаем текущего пользователя
             var currentUser = await _userManager.GetUserAsync(User);
 
-            // Если текущий пользователь является организатором, скрываем поле выбора организаторов
             if (User.IsInRole("Organizer"))
             {
                 ViewData["OrganizerId"] = new List<SelectListItem>
@@ -101,14 +99,12 @@ namespace EventOrganizerInfrastructure.Controllers
             else
             {
                 var organizers = await _userManager.GetUsersInRoleAsync("Organizer");
-                // Формируем список организаторов для передачи в представление
                 var organizerList = organizers.Select(o => new SelectListItem
                 {
                     Value = o.Id.ToString(),
-                    Text = o.OrganizationOrFullName // Или любое другое поле, которое вы хотите отобразить
+                    Text = o.OrganizationOrFullName
                 }).ToList();
 
-                // Передаем список организаторов в представление
                 ViewData["OrganizerId"] = organizerList;
             }
 

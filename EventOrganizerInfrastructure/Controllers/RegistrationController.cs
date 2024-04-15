@@ -152,7 +152,7 @@ namespace EventOrganizerInfrastructure.Controllers
 
             var @event = registration.Event;
 
-            var pdfPath = "ticket.pdf";
+            var pdfPath = "ticket_{@event.Title}.pdf";
             var writer = new PdfWriter(pdfPath);
             var pdf = new PdfDocument(writer);
             var document = new Document(pdf);
@@ -224,7 +224,7 @@ namespace EventOrganizerInfrastructure.Controllers
 
             return new FileContentResult(fileBytes, "application/pdf")
             {
-                FileDownloadName = "ticket.pdf"
+                FileDownloadName = "ticket_{@event.Title}.pdf"
             };
 
         }

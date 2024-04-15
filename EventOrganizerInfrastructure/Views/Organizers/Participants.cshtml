@@ -2,7 +2,10 @@
 <div class="page-header">
     <h2>Учасники</h2>
 </div>
-
+<div>
+    <a asp-action="DownloadParticipants" asp-route-eventId="@ViewBag.EventId" asp-route-format="pdf" class="btn btn-primary">Завантажити у PDF</a>
+    <a asp-action="DownloadParticipants" asp-route-eventId="@ViewBag.EventId" asp-route-format="excel" class="btn btn-primary">Завантажити у Excel</a>
+</div>
 <table class="table">
     @if (Model.Any())
     {
