@@ -12,66 +12,120 @@
     </div>
 }
 
-<div class="event-details-container">
-    @if (!string.IsNullOrEmpty(Model.PictureUrl))
-    {
-        <div class="event-image" style="background-image: url('@Model.PictureUrl')"></div>
-    }
-
-    <div class="event-info">
-        <h1>@Model.Title</h1>
-        <p>@Model.Description</p>
-        @if (!string.IsNullOrEmpty(Model.Speaker))
+<div class="container">
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Model.PictureUrl))
         {
-            <strong>Доповідач:</strong> @Model.Speaker
-
-            <br />
+            <div class="event-image" style="background-image: url('@Model.PictureUrl')"></div>
         }
-        <p><strong>Дата:</strong> @Model.DateTimeStart.ToString("dd MMMM yyyy, HH:mm, ddd") - @Model.DateTimeEnd.ToString("HH:mm, ddd")</p>
-        <p>
-            <strong>Ціна:</strong> @if (Model.Price.HasValue && Model.Price.Value != 0)
-            {
-                @Model.Price
-            }
-            else
-            {
-                <span class="text-success">FREE</span>
-            }
-        </p>
-        <p><strong>Кількість місць:</strong> @Model.Capacity</p>
-        <p><strong>Створено:</strong> @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
-        <p><strong>Оновлено в останній раз:</strong> @Model.LastUpdatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
-        <p>
-            <strong>Місце:</strong> <a asp-controller="Places" asp-action="Details" asp-route-id="@Model.Place.Id">@Model.Place.Name</a>
-            @if (Model.Place.Name != "online")
-            {
-                <span>@Model.Place.AddressLine1 @Model.Place.AddressLine2, @Model.Place.City.Name</span>
-            }
-
-            <br />
-
-        </p>
-
-        <div class="organizers">
-            <h4>Організатори:</h4>
-            @foreach (var organizer in Model.Organizers)
-            {
-                <span>@organizer.OrganizationOrFullName</span>
-            }
+        <div class="action-links">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Редагувати</a>
+            <a asp-action="Index" class="btn btn-secondary">До дошки оголошень</a>
+            <a asp-controller="Registration" asp-action="RegisterForEvent" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Зареєструватись</a>
         </div>
 
-        <div class="tags">
-            <h4>Теги:</h4>
-            @foreach (var tag in Model.Tags)
-            {
-                <span class="tag">@tag.Title</span>
-            }
+        <div class="col-md-9">
+            <h1 class="block-header">@Model.Title</h1>
+
+            <div class="section">
+                <h3>Організатори</h3>
+                <div class="organizers">
+                    @foreach (var organizer in Model.Organizers)
+                    {
+                        <span>@organizer.OrganizationOrFullName</span>
+                    }
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Дата й час</h3>
+                <div class="event-data">@Model.DateTimeStart.ToString("dd MMMM yyyy, HH:mm, ddd") - @Model.DateTimeEnd.ToString("HH:mm, ddd")</div>        
+            </div>
+
+            <div class="section">
+                <h3>Місце</h3>
+                <a asp-controller="Places" asp-action="Details" asp-route-id="@Model.Place.Id">@Model.Place.Name</a>
+                @if (Model.Place.Name != "online")
+                {
+                    <p>@Model.Place.AddressLine1 @Model.Place.AddressLine2, @Model.Place.City.Name</p>
+                }
+            </div>
+
+            <div class="section">
+                <h3>Детальніше про подію</h3>
+                <p>@Model.Description</p>
+            </div>
+
+            <div class="section">
+                <h3>Теги</h3>
+                <div class="tags">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <span class="tag">@tag.Title</span>
+                    }
+                </div>
+            </div>
+
+            <div class="section">
+                <p>Створено: @Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
+                <p>Оновлено в останній раз: @Model.LastUpdatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="registration-sidebar">
+                <h3>Ціна</h3>
+                @if (Model.Price.HasValue && Model.Price.Value != 0)
+                {
+                    <p>@Model.Price грн</p>
+                }
+                else
+                {
+                    <p>Безкоштовно</p>
+                }
+                <a asp-controller="Registration" asp-action="RegisterForEvent" asp-route-id="@Model?.Id" class="btn btn-primary btn-block">Зареєструватись</a>
+            </div>
         </div>
     </div>
+   
 </div>
 
-<div class="action-links">
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Редагувати</a>
-    <a asp-action="Index" class="btn btn-secondary">До дошки оголошень</a>
-    <a asp-controller="Registration" asp-action="RegisterForEvent" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Зареєструватись</a>
-</div>
+
+<style>
+    .section{
+        margin-bottom:40px;
+    }
+
+    .registration-sidebar {
+        position: fixed;
+        top: 50%;
+        right: 20px; 
+        transform: translateY(-50%); 
+        background-color: #f8f9fa; 
+        padding: 20px; 
+        border-radius: 5px; 
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+    }
+
+        .registration-sidebar h3 {
+            font-size: 1.25rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .registration-sidebar p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .registration-sidebar .btn {
+            font-size: 1rem;
+        }
+
+    .action-links {
+        margin-top: 20px; 
+    }
+
+        .action-links .btn {
+            margin-right: 10px; 
+        }
+</style>

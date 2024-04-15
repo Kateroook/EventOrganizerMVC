@@ -1,42 +1,55 @@
-﻿ @model EventOrganizerDomain.Model.Place
+﻿@model EventOrganizerDomain.Model.Place
 
 @{
     ViewData["Title"] = "Про місце";
 }
 
 <div class="container">
-    @if (!string.IsNullOrEmpty(Model.ImageUrl))
-    {
-        <div class="event-image" style="background-image: url('@Model.ImageUrl')"></div>
-    }
     <div class="row">
         <div class="col-md-6">
-            <h1>@Html.DisplayFor(model => model.Name)</h1>
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="event-image" style="background-image: url('@Model.ImageUrl')"></div>
+            }          
+            <h1 class ="page-header">@Html.DisplayFor(model => model.Name)</h1>           
+
             <p>@Html.DisplayFor(model => model.PlaceType.Name)</p>
-            <p>@Html.DisplayFor(model => model.Description)</p>
+            <div class="group">
+                <p>@Html.DisplayFor(model => model.Description)</p>
+            </div>
+
             @if (Model.Name != "online")
             {
-                <p><strong>Адреса:</strong> @Html.DisplayFor(model => model.AddressLine1), @Html.DisplayFor(model => model.AddressLine2), @Html.DisplayFor(model => model.City.Name), @Html.DisplayFor(model => model.Zip)</p>
-                <p><strong>Кількість місць:</strong> @Html.DisplayFor(model => model.Capacity)</p>
-                <p><strong>Телефон:</strong> @Html.DisplayFor(model => model.PhoneNumber)</p>
-                <p><strong>Email:</strong> @Html.DisplayFor(model => model.ContactEmail)</p>
-                <p><strong>Веб-сторінка:</strong> <a href="@Html.DisplayFor(model => model.Website)">@Html.DisplayFor(model => model.Website)</a></p>
+                <div class="group">
+                    <h4 class="block-header">Контактна інформація</h4>
+                    <p><strong>Телефон:</strong> @Html.DisplayFor(model => model.PhoneNumber)</p>
+                    <p><strong>Email:</strong> @Html.DisplayFor(model => model.ContactEmail)</p>
+                    <p><strong>Веб-сторінка:</strong> <a href="@Html.DisplayFor(model => model.Website)">@Html.DisplayFor(model => model.Website)</a></p>
+                </div>
 
+                <div class="group">
+                    <h4 class="block-header">Місцезнаходження</h4>
+                    <p><strong>Адреса:</strong> @Html.DisplayFor(model => model.AddressLine1), @Html.DisplayFor(model => model.AddressLine2), @Html.DisplayFor(model => model.City.Name), @Html.DisplayFor(model => model.Zip)</p>
+                    <p><strong>Кількість місць:</strong> @Html.DisplayFor(model => model.Capacity)</p>
+                </div>
             }
+
+            <div class="container mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редагувати</a>
+                <a asp-action="Index" asp-route-id="@Model.CityId" class="btn btn-secondary">До інших місць</a>
+            </div>
+        </div>
+
+        <!-- Добавляем контейнер для карты справа от текста о месте -->
+        <div class="col-md-6">
+            <div class="container content" id="map" style="height: 400px;"></div>
         </div>
     </div>
-    <div class="container mt-4">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Редагувати</a>
-        <a asp-action="Index" asp-route-id="@Model.CityId" class="btn btn-secondary">До інших місць</a>
-    </div>
-
 </div>
-    <div class="container content" id="map" style="height: 400px;"></div>
-
-<div class="container сontent mt-4">
-    <div class="block-header">
-        <h2>Події в @Model.Name</h2>
-    </div>
+<div class="container mt-4">
+    
+        <h2 class ="block-header">Події в @Model.Name</h2>
+    
     <div class="row row-cols-1 row-cols-md-4 g-3">
         @foreach (var eventItem in Model.Events)
         {
@@ -148,3 +161,79 @@
 
     </script>
 }
+
+<style>
+    .container {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+
+    .page-header {
+        border-bottom: 1px solid #e5e5e5;
+        padding-bottom: 9px;
+        margin-bottom: 20px;
+    }
+
+    .event-image {
+        width: 100%;
+        height: 300px;
+        background-size: cover;
+        background-position: center;
+        margin-bottom: 20px;
+    }
+
+    .group {
+        margin-bottom: 30px;
+    }
+
+    .group h4 {
+        margin-bottom: 10px;
+    }
+
+    .btn-details, .btn-delete {
+        margin-right: 10px;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .event-date {
+        font-size: 12px;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .event-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .organizers {
+        margin-bottom: 10px;
+    }
+
+    .tag {
+        display: inline-block;
+        background-color: #f1f1f1;
+        color: #000;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .event-price {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .card-bottom {
+        margin-top: 10px;
+    }
+
+    .btn-details, .btn-delete {
+        margin-right: 10px;
+    }
+</style>
