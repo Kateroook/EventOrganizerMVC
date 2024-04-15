@@ -9,6 +9,7 @@ using EventOrganizerDomain.Model;
 using EventOrganizerInfrastructure;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventOrganizerInfrastructure.Controllers
 {
@@ -117,6 +118,7 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         // GET: Places/Create
+        [Authorize(Roles = "Organizer, Moderator")]
         public IActionResult Create()
         {
             ViewData["CityId"] = new SelectList(_context.Cities, "Id", "Name");
@@ -125,8 +127,7 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         // POST: Places/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Organizer, Moderator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PlaceTypeId,CityId,Name,Description,UnitNumber,AddressLine1,AddressLine2,Zip,CoordinatesCol1,CoordinatesCol2,PlaceImage,Capacity,PhoneNumber,ContactEmail,Website,Id")] Place place)
@@ -141,7 +142,7 @@ namespace EventOrganizerInfrastructure.Controllers
             ViewData["PlaceTypeId"] = new SelectList(_context.PlaceTypes, "Id", "Name", place.PlaceTypeId);
             return View(place);
         }
-
+        [Authorize(Roles = "Organizer, Moderator")]
         // GET: Places/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -159,10 +160,9 @@ namespace EventOrganizerInfrastructure.Controllers
             ViewData["PlaceTypeId"] = new SelectList(_context.PlaceTypes, "Id", "Name", place.PlaceTypeId);
             return View(place);
         }
-
+        
         // POST: Places/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Organizer, Moderator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("PlaceTypeId,CityId,Name,Description,UnitNumber,AddressLine1,AddressLine2,Zip,CoordinatesCol1,CoordinatesCol2,PlaceImage,Capacity,PhoneNumber,ContactEmail,Website,Id")] Place place)
@@ -202,6 +202,7 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         // GET: Places/Delete/5
+        [Authorize(Roles = "Organizer, Moderator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -222,6 +223,7 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
         // POST: Places/Delete/5
+        [Authorize(Roles = "Organizer, Moderator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

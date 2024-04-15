@@ -18,5 +18,6 @@ namespace EventOrganizerInfrastructure.ViewModel
         public bool AgreeToTerms { get; set; }
 
        public int EventId { get; set; }
+       public int RegistrationId { get; set; }
     }
 }

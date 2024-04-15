@@ -8,45 +8,50 @@
 </p>
 
 <div class="row row-cols-1  row-cols-lg-3 row-cols-md-3 row-cols-sm-2 g-3">
-  
-        @foreach (var e in Model)
-        {
-            <div class="col">
-                <div class="card event-card">
 
-                    @if (!string.IsNullOrEmpty(@e.PictureUrl))
-                    {
-                        <img src="@e.PictureUrl" class="card-img-top" alt="Постер події">
+    @foreach (var e in Model)
+    {
+        <div class="col">
+            <div class="card event-card">
 
-                    }
-                    <div class="card-body d-flex flex-column justify-content-between">
+                @if (!string.IsNullOrEmpty(@e.PictureUrl))
+                {
+                    <img src="@e.PictureUrl" class="card-img-top" alt="Постер події">
 
-                        <div class="card-text align-items-top">
-                            <p class="card-text mt-50"><span class="event-date">@e.DateTimeStart.ToString("dd MMMM, HH:mm, ddd")</span></p>
-                            <h5 class="card-title">@e.Title</h5>
-                        </div>
+                }
+                else
+                {
+                    <img src="https://www.tlbx.app/200.svg" class="card-img-top" alt="Placeholder">
+                }
 
-                        <div class="card-text align-items-end">
-                            <p class="card-text mt-auto mb-15">
-                                <span class="event-place">
-                                    @if (e.Place.CityId != null)
-                                    {
-                                        <text>@e.Place.City.Name,</text>
-                                    }
-                                    @e.Place.Name
-                                </span>
-                            </p>
-                        </div>
+                <div class="card-body d-flex flex-column justify-content-between">
 
+                    <div class="card-text align-items-top">
+                        <p class="card-text mt-50"><span class="event-date">@e.DateTimeStart.ToString("dd MMMM, HH:mm, ddd")</span></p>
+                        <h5 class="card-title">@e.Title</h5>
                     </div>
-                    <div class="card-bottom card-buttons">
-                        <a asp-controller="Events" asp-action="Details" asp-route-id="@e.Id" class="btn btn-primary btn-details">Деталі</a>
-                        <a asp-controller="Events" asp-action="Edit" asp-route-id="@e.Id" class="btn btn-primary btn-edit">Редагувати</a>
-                        <a  asp-action="Participants" asp-route-eventId="@e.Id" class="btn btn-primary btn-edit">Список учасників</a>
-                        <a asp-controller="Events" asp-action="Delete" asp-route-id="@e.Id" class="btn btn-secondary btn-delete">Видалити</a>
+
+                    <div class="card-text align-items-end">
+                        <p class="card-text mt-auto mb-15">
+                            <span class="event-place">
+                                @if (e.Place.CityId != null)
+                                {
+                                    <text>@e.Place.City.Name,</text>
+                                }
+                                @e.Place.Name
+                            </span>
+                        </p>
                     </div>
+
+                </div>
+                <div class="card-bottom card-buttons">
+                    <a asp-controller="Events" asp-action="Details" asp-route-id="@e.Id" class="btn btn-secondary btn-details" style="margin-bottom:5px"> Деталі</a>
+                    <a asp-action="Participants" asp-route-eventId="@e.Id" class="btn btn-secondary btn-edit" style="margin-bottom:5px">Список учасників</a>
+                    <a asp-controller="Events" asp-action="Edit" asp-route-id="@e.Id" class="btn btn-secondary btn-edit" style="margin-bottom:5px">Редагувати</a>
+                    <a asp-controller="Events" asp-action="Delete" asp-route-id="@e.Id" class="btn btn-danger btn-delete" style="margin-bottom:5px">Видалити</a>
                 </div>
             </div>
-        }
+        </div>
+    }
 </div>
 

@@ -24,7 +24,7 @@
             <a asp-controller="Registration" asp-action="RegisterForEvent" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Зареєструватись</a>
         </div>
 
-        <div class="col-md-9">
+        <div class="col-md-8">
             <h1 class="block-header">@Model.Title</h1>
 
             <div class="section">
@@ -71,7 +71,7 @@
                 <p>Оновлено в останній раз: @Model.LastUpdatedAt.ToString("dd MMMM yyyy, HH:mm")</p>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="registration-sidebar">
                 <h3>Ціна</h3>
                 @if (Model.Price.HasValue && Model.Price.Value != 0)
@@ -98,7 +98,7 @@
     .registration-sidebar {
         position: fixed;
         top: 50%;
-        right: 20px; 
+        right: 40px; 
         transform: translateY(-50%); 
         background-color: #f8f9fa; 
         padding: 20px; 

@@ -1,0 +1,10 @@
+﻿@{
+    ViewData["Title"] = "Підтвердження реєстрації";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-success">
+    Ви успішно зареєструвалися на подію!
+    <a asp-controller="Registration" asp-action="DownloadTicket" asp-route-registrationId="@Model.RegistrationId">Завантажити білет</a>
+</div>

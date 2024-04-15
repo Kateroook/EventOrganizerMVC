@@ -18,7 +18,7 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-                       
+
             <label>Тип місця проведення:</label>
             <select id="placeType" class="form-control" required>
                 <option value="">Оберіть тип місця</option>
@@ -35,30 +35,33 @@
                 <select id="city" class="form-control" required></select>
                 <br />
                 <label>Місце:</label>
-                <select id="place" name="PlaceId" class="form-control" id="tagsSelect" required></select>
+                <select id="place" name="PlaceId" class="form-control" required></select>
                 <span asp-validation-for="PlaceId" class="text-danger"></span>
             </div>
 
             <!-- Вибір онлайн місця -->
             <div id="onlineFields" style="display:none;">
                 <label>Місце в онлайні:</label>
-                <select id="onlinePlaces" name="PlaceId" class="form-control" id="tagsSelect" required></select>
+                <select id="onlinePlaces" name="PlaceId" class="form-control" required></select>
                 <span asp-validation-for="PlaceId" class="text-danger"></span>
             </div>
-            
+
             <input type="hidden" id="getCountriesUrl" value="@Url.Action("GetCountries", "Places")" />
             <input type="hidden" id="getCitiesInCountryUrl" value="@Url.Action("GetCitiesInCountry", "Places")" />
 
+            @if (User.IsInRole("Moderator"))
+            {
+                <div class="form-group">
+                    <label asp-for="Organizers" class="control-label">Організатори</label>
+                    <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple" id="organizers" required>
+                    </select>
+                </div>
+            }
 
-            <div class="form-group">
-                <label asp-for="Organizers" class="control-label">Організатори</label>
-                <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple" id="tagsSelect" required>
-                </select>        
-            </div>
             <div class="form-group">
                 <label asp-for="Tags" class="control-label">Теги</label>
                 <select asp-for="Tags" class="form-control" asp-items="ViewBag.TagId" multiple="multiple" id="tagsSelect"></select>
-            </div>                        
+            </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label">Опис</label>
                 <input asp-for="Description" class="form-control" />
@@ -94,7 +97,7 @@
                 <input asp-for="PictureUrl" class="form-control" />
                 <span asp-validation-for="PictureUrl" class="text-danger"></span>
             </div>
-            <div class="form-group">                
+            <div class="form-group">
                 <img id="imageUrlPreview" class="img-fluid" src="#" alt="Постер події" style="max-width: 200px; max-height: 200px; display: none;" />
             </div>
 
@@ -104,7 +107,7 @@
         </form>
     </div>
 </div>
- 
+
 
 
 
@@ -113,7 +116,9 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
@@ -122,6 +127,8 @@
         $(document).ready(function () {
             const placeSelector = new PlaceSelector();
             $('#tagsSelect').select2();
+            $('#place').select2();
+            $('#organizers').select2();
 
         });
     </script>
@@ -133,7 +140,7 @@
             if (imageUrl) {
                 $('#imageUrlPreview').attr('src', imageUrl).show();
             } else {
-                
+
                 $('#imageUrlPreview').hide();
             }
         }

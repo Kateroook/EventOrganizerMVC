@@ -233,16 +233,16 @@ body {
 .organizer{
 
 }
+
 .tag {
     display: inline-block;
-    padding: 5px 10px;
-    margin-bottom: 5px;
-    background-color: dodgerblue;
-    color: #fff;
-    border-radius: 20px;
+    background-color: #f1f1f1;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 4px;
     margin-right: 5px;
+    margin-bottom: 5px;
 }
-
 
 /* Стили для блока с популярными городами */
 .popular-cities {

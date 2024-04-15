@@ -7,15 +7,16 @@
 
 <div class="container content content--top fix">
 
-    <div class="page-header">
+    <div class="block-header">
         <h1>Усі події</h1>
     </div>
 
+    @if (User.Identity.IsAuthenticated && (User.IsInRole("Organizer") || User.IsInRole("Moderator"))){
+        <p>
+            <a asp-action="Create" class="btn btn-primary">Додати подію</a>
+        </p>
 
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Додати подію</a>
-    </p>
-
+    }
 
     <div class="row row-cols-1  row-cols-lg-4 row-cols-md-3 row-cols-sm-2 g-3">
         @foreach (var e in Model)
@@ -28,6 +29,10 @@
                         <img src="@e.PictureUrl" class="card-img-top" alt="Постер події">
 
                     }
+                    else{
+                        <img src="https://www.tlbx.app/200.svg" class="card-img-top" alt="Placeholder">
+                    }
+
                     <div class="card-body d-flex flex-column justify-content-between">
 
                         <div class="card-text align-items-top">
@@ -60,7 +65,11 @@
                     </div>
                     <div class="card-bottom card-buttons">
                         <a asp-action="Details" asp-route-id="@e.Id" class="btn btn-primary btn-details">Деталі</a>
-                        <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-secondary btn-delete">Видалити</a>
+                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Moderator")))
+
+                        {
+                            <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-danger btn-delete">Видалити</a>
+                        }
                     </div>
 
                 </div>

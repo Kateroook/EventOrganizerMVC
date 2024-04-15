@@ -13,26 +13,65 @@ public partial class Event : Entity
     }
 
     [Required(ErrorMessage = "Оберіть місце проведення!")]
-    [Display(Name ="Місце")]
+    [Display(Name = "Місце")]
     public int PlaceId { get; set; }
 
     [Required(ErrorMessage = "Поле не повинно бути порожнім!")]
-    [Display(Name ="Назва")]
+    [Display(Name = "Назва")]
     public string Title { get; set; } = null!;
 
-    [Display(Name ="Опис")]
+    [Display(Name = "Опис")]
     public string? Description { get; set; }
 
-    [Display(Name ="Доповідач")]
+    [Display(Name = "Доповідач")]
     public string? Speaker { get; set; }
-    
+
     [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:dd MMMM yyyy, HH:mm, ddd}", ApplyFormatInEditMode = false)]   
+    [DisplayFormat(DataFormatString = "{0:dd MMMM yyyy, HH:mm, ddd}", ApplyFormatInEditMode = false)]
     public DateTime DateTimeStart { get; set; }
 
     [DataType(DataType.DateTime)]
     [DisplayFormat(DataFormatString = "{0:dd MMMM, HH:mm, ddd}", ApplyFormatInEditMode = false)]
     public DateTime DateTimeEnd { get; set; }
+
+    [NotMapped]
+    [DataType(DataType.Date)]
+    public string EventDate
+    {
+        get
+        {
+            // Проверяем, если день начала и день конца совпадают
+            if (DateTimeStart.Date == DateTimeEnd.Date)
+            {
+                return $"{DateTimeStart:dd MMMM yyyy, ddd}";
+            }
+            else
+            {               
+                return $"{DateTimeStart:dd MMMM yyyy} - {DateTimeEnd:dd MMMM yyyy}";
+            }
+        }
+    }    
+
+    [NotMapped]
+    [DataType(DataType.Time)]
+    public string EventTime
+    {
+        get
+        {
+            // Проверяем, если день начала и день конца совпадают
+            if (DateTimeStart.Date == DateTimeEnd.Date)
+            {                
+                return $"{DateTimeStart:HH:mm} - {DateTimeEnd:HH:mm}";
+            }
+            else
+            {
+                
+                return $"{DateTimeStart:HH:mm}";
+            }
+        }
+    }
+
+
 
     [Display(Name ="Ціна (грн)")]
     public double? Price { get; set; }

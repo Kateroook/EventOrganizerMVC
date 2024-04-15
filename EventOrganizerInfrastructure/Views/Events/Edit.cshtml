@@ -15,8 +15,13 @@
         <div class="col-md-">
             <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                
-                
+
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
                 <label>Тип місця проведення:</label>
                 <select id="placeType" class="form-control" required>
                     <option value="">Оберіть тип місця</option>
@@ -50,7 +55,7 @@
                     <input type="hidden" id="getCitiesInCountryUrl" value="@Url.Action("GetCitiesInCountry", "Places")" />
 
 
-                <div class="form-group">
+                <div class="form-group" style="margin-top:20px">
                     <label asp-for="Organizers" class="control-label">Організатори</label>
                     <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple" id="organizersSelect"></select>
                 </div>
@@ -60,11 +65,7 @@
                     <select asp-for="Tags" class="form-control" asp-items="ViewBag.TagId" multiple="multiple" id="tagsSelect"></select>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="Title" class="control-label"></label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
+
                 <div class="form-group">
                     <label asp-for="Description" class="control-label"></label>
                     <input asp-for="Description" class="form-control" />
@@ -134,6 +135,8 @@
         $(document).ready(function () {
             const placeSelector = new PlaceSelector();
             $('#tagsSelect').select2();
+            $('#place').select2();
+            $('#onlinePlaces').select2();
             $('#organizersSelect').select2();            
 
             var selectedTags = [@Html.Raw(Json.Serialize(ViewBag.SelectedTags))];           

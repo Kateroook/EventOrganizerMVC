@@ -20,18 +20,16 @@ namespace EventOrganizerInfrastructure.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
+
+
         [Authorize(Roles = "Organizer")]
         public IActionResult MyEvents()
         {
-            
-            // Получаем текущего организатора
             var organizer = _userManager.GetUserAsync(User).Result;
             if (organizer == null)
             {
                 return RedirectToAction("Login", "Account");
             }
-
-            // Получаем список всех событий, созданных текущим организатором
             
             var events = _context.Events
                 .Include(e => e.Place).ThenInclude(p => p.City)
@@ -39,6 +37,7 @@ namespace EventOrganizerInfrastructure.Controllers
 
             return View(events);
         }
+
 
         [Authorize(Roles = "Organizer")]
         public IActionResult Participants(int eventId)

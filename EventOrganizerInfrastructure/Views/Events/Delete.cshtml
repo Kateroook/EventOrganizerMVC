@@ -1,14 +1,14 @@
 ﻿@model EventOrganizerDomain.Model.Event
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Видалити";
 }
 
 <h1>Видалити подію</h1>
 
 <h3>Ви впевнені, що хочете видалити цю подію?</h3>
 <div>
-    <h4>Event</h4>
+    <h4>Подія</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -76,7 +76,7 @@
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
-            <input type="submit" value="Delete" class="btn btn-danger" />
+            <input type="submit" value="Видалити" class="btn btn-danger" />
             <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
         </div>
     </form>
