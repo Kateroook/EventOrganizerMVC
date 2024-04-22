@@ -19,7 +19,15 @@ namespace EventOrganizerInfrastructure.ViewModel
         [Compare("Password", ErrorMessage ="Паролі не співпадають")]
         [Display(Name ="Підтвердження паролю")]
         [DataType(DataType.Password)]
+
         public string PasswordConfirmed { get; set; } = string.Empty;
         //public string PhoneNumberConfirmed { get; set;} = string.Empty; 
+
+        [Display(Name ="Назва організації")]
+        public string OrganizationName { get; set; }
+
+        [Required]
+        [Display(Name ="Роль")]
+        public string Role { get; set; }
     }
 }

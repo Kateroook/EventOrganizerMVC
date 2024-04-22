@@ -29,11 +29,27 @@ namespace EventOrganizerInfrastructure.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email, RegistrationDate = DateOnly.FromDateTime(DateTime.Today)};
+                User user = new User 
+                {
+                    Email = model.Email, 
+                    UserName = model.Email, 
+                    PhoneNumber = model.PhoneNumber,
+                    RegistrationDate = DateOnly.FromDateTime(DateTime.Today)
+                };
                 // додаємо користувача
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    if (model.Role == "Organizer")
+                    {
+                        user.OrganizationName = model.OrganizationName;
+                        user.PhoneNumber = model.PhoneNumber;
+                        await _userManager.AddToRoleAsync(user, "Organizer");
+                    }
+                    else
+                    {                       
+                        await _userManager.AddToRoleAsync(user, "Participant");
+                    }
                     // установка кукі
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
@@ -52,7 +68,7 @@ namespace EventOrganizerInfrastructure.Controllers
         [HttpGet]
             public IActionResult Login(string returnUrl = null)
         {
-            // Если returnUrl пустой, попробуйте получить его из заголовка Referer
+            // Якщо returnUrl пустий, то пробуємо отримати з заголовку Referer
             if (string.IsNullOrEmpty(returnUrl) && Request.Headers.ContainsKey("Referer"))
             {
                 returnUrl = Request.Headers["Referer"];

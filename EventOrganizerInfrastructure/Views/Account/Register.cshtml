@@ -22,8 +22,42 @@
                 <span asp-validation-for="PasswordConfirmed" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Зареєсттруватися</button>
+                <label asp-for="Role" class="control-label"></label>
+                <select asp-for="Role" class="form-control">
+                    <option value="Participant">Учасник</option>
+                    <option value="Organizer">Організатор</option>
+                </select>
+            </div>
+            <div class="form-group" id="organizationNameField" style="display: none;">
+                <label asp-for="OrganizationName" class="control-label"></label>
+                <input asp-for="OrganizationName" class="form-control" />
+                <span asp-validation-for="OrganizationName" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="phoneNumberField" style="display: none;">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Зареєструватися</button>
             </div>
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Role').change(function () {
+                var role = $(this).val();
+                if (role === 'Organizer') {
+                    $('#organizationNameField').show();
+                    $('#phoneNumberField').show();
+                } else {
+                    $('#organizationNameField').hide();
+                    $('#phoneNumberField').hide();
+                }
+            });
+        });
+    </script>
+}

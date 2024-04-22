@@ -16,7 +16,17 @@ namespace EventOrganizerInfrastructure.Controllers
             _userManager = userManager;
         }
         public IActionResult Index() => View(_roleManager.Roles.ToList());
-        public IActionResult UserList() => View(_userManager.Users.ToList());
+        //public IActionResult UserList() => View(_userManager.Users.ToList());
+        public IActionResult UserList()
+        {
+            var currentUser = _userManager.GetUserAsync(User).Result;
+
+            var users = _userManager.Users.ToList();
+
+            users = users.Where(u => u.Id != currentUser.Id).ToList();
+
+            return View(users);
+        }
 
         public async Task<IActionResult> Edit(string userId)
         {
@@ -36,7 +46,6 @@ namespace EventOrganizerInfrastructure.Controllers
                 };
                 return View(model);
             }
-
             return NotFound();
         }
 

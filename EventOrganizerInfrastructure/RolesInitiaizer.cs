@@ -52,10 +52,12 @@ namespace EventOrganizerInfrastructure
                 "Organizer",
                 "Organizer",
                 "Organizer",
-    "Organizer",
-    "Organizer",
-    "Organizer",
-    "Organizer","Organizer","Organizer"
+                "Organizer",
+                "Organizer",
+                "Organizer",
+                "Organizer",
+                "Organizer",
+                "Organizer"
 };
 
             string passwords = "Qwerty_11!";
