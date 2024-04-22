@@ -19,9 +19,10 @@
             <div class="event-image" style="background-image: url('@Model.PictureUrl')"></div>
         }
         <div class="action-links">
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Редагувати</a>
-            <a asp-action="Index" class="btn btn-secondary">До дошки оголошень</a>
-            <a asp-controller="Registration" asp-action="RegisterForEvent" asp-route-id="@Model?.Id" class="btn btn-outline-secondary">Зареєструватись</a>
+             @if (User.Identity.IsAuthenticated && (User.IsInRole("Moderator"))){
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Редагувати</a>
+             }
+            <a asp-action="Index" class="btn btn-secondary">До дошки оголошень</a>          
         </div>
 
         <div class="col-md-8">

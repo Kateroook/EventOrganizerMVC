@@ -100,7 +100,7 @@ namespace EventOrganizerInfrastructure.Controllers
         {
             if (!TempData.ContainsKey("SuccessMessage") || !TempData.ContainsKey("RegistrationId"))
             {
-                return RedirectToAction("Index", "Events"); // Редирект на главную страницу, если отсутствует информация о регистрации
+                return RedirectToAction("Index", "Events"); 
             }
 
             var successMessage = TempData["SuccessMessage"].ToString();
@@ -151,8 +151,8 @@ namespace EventOrganizerInfrastructure.Controllers
             TempData.Remove("FirstName");
 
             var @event = registration.Event;
-
-            var pdfPath = "ticket_{@event.Title}.pdf";
+            
+            var pdfPath = $"ticket_{lastName} {firstName}_{@event.Title}.pdf";
             var writer = new PdfWriter(pdfPath);
             var pdf = new PdfDocument(writer);
             var document = new Document(pdf);
@@ -164,8 +164,7 @@ namespace EventOrganizerInfrastructure.Controllers
             PdfFont fontAwesomeFont = PdfFontFactory.CreateFont(fontAwesomePath, PdfEncodings.IDENTITY_H);
 
             FontProgramFactory.RegisterFont(fontPath);
-
-           // document.SetFont(font);
+   
             document.Add(new Paragraph(@event.Title)
                 .SetFont(font)
                 .SetFontSize(16)
@@ -185,8 +184,7 @@ namespace EventOrganizerInfrastructure.Controllers
             Paragraph placeNameParagraph = new Paragraph()
                 .Add(new Text("\uf3c5 ").SetFont(fontAwesomeFont))
                 .Add(new Text(@event.Place.Name).SetFont(font)); 
-
-            // Добавляем параграф названия места проведения в документ
+           
             document.Add(placeNameParagraph);
 
             document.Add(new LineSeparator(new SolidLine())
@@ -224,10 +222,8 @@ namespace EventOrganizerInfrastructure.Controllers
 
             return new FileContentResult(fileBytes, "application/pdf")
             {
-                FileDownloadName = "ticket_{@event.Title}.pdf"
+                FileDownloadName = pdfPath
             };
-
         }
-
     }
 }

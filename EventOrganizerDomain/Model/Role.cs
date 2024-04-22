@@ -17,9 +17,6 @@ public partial class Role : IdentityRole<int>
         Name = roleName;
     }
 
-    //[Display(Name="Роль")]
-    //public string Name { get; set; }
-    
     [Display(Name ="Опис")]
     public string? Description { get; set; } = string.Empty;
     public virtual ICollection<IdentityUserRole<int>> Users { get; set; }
