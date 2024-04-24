@@ -7,6 +7,7 @@
         $('#placeType').change(() => this.handlePlaceTypeChange());
         $('#country').change(() => this.handleCountryChange());
         $('#city').change(() => this.handleCityChange());
+
     }
 
     handlePlaceTypeChange() {

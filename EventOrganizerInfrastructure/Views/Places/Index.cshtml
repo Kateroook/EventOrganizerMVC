@@ -10,7 +10,11 @@
     @foreach (var place in Model)
     {
         <div class="col">
-            <div class="card place-card">
+            <div class="card place-card"
+                data-coordinates="@place.CoordinatesCol2"
+                data-geometry-type="@place.CoordinatesCol1?.GeometryType" 
+                data-name="@place.Name">
+                       
                 @if (!string.IsNullOrEmpty(place.ImageUrl))
                 {
                     <img src="@place.ImageUrl" class="card-img-top" alt="Постер події">
@@ -27,6 +31,11 @@
             </div>
         </div>
     }
+</div>
+
+<!--Карта-->
+<div class="row">
+    <div class="container content" id="map" style="height: 400px;"></div>
 </div>
 
 <h3 class="block-header">Популярні події у місті @ViewBag.CityName</h3>
@@ -96,3 +105,75 @@
     <a asp-controller="Cities" asp-action="Index" class="btn">Показати всі міста</a>
 </div>
 
+
+@section scripts {
+    <!-- Leaflet.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Карта -->
+    <script>
+        var map = L.map('map').setView([50.4501, 30.5234], 13);
+
+        // OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var places = document.querySelectorAll('.place-card');
+
+        places.forEach(function (placeElement) {
+            var coordinatesString = placeElement.getAttribute('data-coordinates');
+            var geometryType = placeElement.getAttribute('data-geometry-type');
+            var placeName = placeElement.getAttribute('data-name');
+
+            console.log(`Coordinates: ${coordinatesString}, GeometryType: ${geometryType}, PlaceName: ${placeName}`);
+
+            // Проверяем наличие координат
+            if (!coordinatesString) {
+                console.log('Coordinates not provided');
+                return;
+            }
+
+            // Проверяем тип геометрии
+            if (geometryType == 'Point') {
+                var coordinates = coordinatesString.match(/\d+\.\d+/g);
+                if (!coordinates || coordinates.length < 2) {
+                    console.log('Invalid Point coordinates format');
+                    return;
+                }
+
+                var lat = parseFloat(coordinates[1]);
+                var lng = parseFloat(coordinates[0]);
+
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup(placeName);
+
+                map.setView([lat, lng], 13);
+
+            }
+            if (geometryType == 'Polygon') {
+                var coordinatesArray = coordinatesString.match(/\d+\.\d+/g);
+                if (!coordinatesArray || coordinatesArray.length < 6) {
+                    console.log('Invalid Polygon coordinates format');
+                    return;
+                }
+
+                var polygonPoints = [];
+
+                for (var i = 0; i < coordinatesArray.length; i += 2) {
+                    var lat = parseFloat(coordinatesArray[i]);
+                    var lng = parseFloat(coordinatesArray[i + 1]);
+                    polygonPoints.push([lat, lng]);
+                }
+
+                L.polygon([polygonPoints]).addTo(map)
+                    .bindPopup(placeName);
+
+                var bounds = L.polygon([polygonPoints]).getBounds();
+                map.fitBounds(bounds);
+            }
+        });
+    </script>
+
+}

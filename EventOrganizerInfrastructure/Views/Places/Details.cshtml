@@ -106,7 +106,7 @@
                     </div>
                     <div class="card-bottom card-buttons">
                         <a asp-controller="Events" asp-action="Details" asp-route-id="@eventItem.Id" class="btn btn-primary btn-details">Деталі</a>
-                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Moderator")||User.IsInRole("Organizer")))
+                        @if (User.Identity.IsAuthenticated && (User.IsInRole("Moderator")))
                         {
                             <a asp-controller="Events" asp-action="Delete" asp-route-id="@eventItem.Id" class="btn btn-danger btn-delete">Видалити</a>
                         }
