@@ -74,7 +74,6 @@ namespace EventOrganizerInfrastructure.Controllers
            
             if (format == "pdf")
             {
-                // Создание PDF
                 var pdfPath = $"participants_{eventName}.pdf";
                 using (var stream = new MemoryStream())
                 {
@@ -131,6 +130,57 @@ namespace EventOrganizerInfrastructure.Controllers
             {
                 return BadRequest("Непідтримуємий формат");
             }
+        }
+
+        [Authorize(Roles = "Organizer")]
+        public async Task<IActionResult> UploadParticipants(int eventId, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Файл не был загружен.");
+            }
+
+            var participants = new List<User>();
+            using (var stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+                stream.Position = 0;
+                using (var workbook = new XLWorkbook(stream))
+                {
+                    var worksheet = workbook.Worksheet(1);
+                    var rows = worksheet.RowsUsed().Skip(1); 
+
+                    foreach (var row in rows)
+                    {
+                        var fullName = row.Cell(1).Value.ToString();
+                        var email = row.Cell(2).Value.ToString().ToUpper();
+
+                        var existingUser = await _userManager.FindByEmailAsync(email);
+                        if (existingUser != null)
+                        {
+                            participants.Add(existingUser);
+                        }                       
+                    }
+                }
+            }
+            foreach (var participant in participants)
+            {
+                var existingRegistration = _context.Registrations.FirstOrDefault(r => r.UserId == participant.Id && r.EventId == eventId);
+                if (existingRegistration == null)
+                {
+                    var registration = new Registration
+                    {
+                        UserId = participant.Id,
+                        EventId = eventId,
+                        CreatedAt = DateTime.Now,
+                    };
+                    _context.Registrations.Add(registration);
+                    Console.WriteLine("Succeed");
+                }
+            }
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Participants), new { eventId });
         }
     }
 }

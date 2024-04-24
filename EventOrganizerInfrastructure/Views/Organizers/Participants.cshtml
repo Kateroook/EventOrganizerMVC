@@ -3,25 +3,31 @@
     <h2>Учасники</h2>
 </div>
 <div>
-    <a asp-action="DownloadParticipants" asp-route-eventId="@ViewBag.EventId" asp-route-format="pdf" class="btn btn-primary">Завантажити у PDF</a>
-    <a asp-action="DownloadParticipants" asp-route-eventId="@ViewBag.EventId" asp-route-format="excel" class="btn btn-primary">Завантажити у Excel</a>
+    <form id="uploadForm" asp-action="UploadParticipants" asp-route-eventId="@ViewBag.EventId" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="file">Завантажити список учасників (Excel)</label>
+            <input type="file" class="form-control-file" id="file" name="file" onchange="fileSelected()">
+            <button type="submit" id="uploadButton" class="btn btn-primary" style="display: none;">Додати</button>
+        </div>
+    </form>
+        <a asp-action="DownloadParticipants" asp-route-eventId="@ViewBag.EventId" asp-route-format="pdf" class="btn btn-primary ml-2">Завантажити у PDF</a>
+        <a asp-action="DownloadParticipants" asp-route-eventId="@ViewBag.EventId" asp-route-format="excel" class="btn btn-primary ml-2">Завантажити у Excel</a>
 </div>
 <table class="table">
     @if (Model.Any())
     {
-        <tread>
+        <thead>
             <tr>
                 <th>Ім'я</th>
                 <th>Пошта</th>
             </tr>
-        </tread>
+        </thead>
         <tbody>
         @foreach (var participant in Model)
         {
             <tr>
-                    <td>@participant.FullName</td>
-                    <td>@participant.Email</td>
-
+                <td>@participant.FullName</td>
+                <td>@participant.Email</td>
             </tr>
         }
         </tbody>
@@ -30,5 +36,21 @@
     {
         <span>Поки ніхто не зареєструвався на вашу подію ;( </span>
     }
-
 </table>
+
+
+@section Scripts{
+
+<script>
+    function fileSelected() {
+        var fileInput = document.getElementById('file');
+        var uploadButton = document.getElementById('uploadButton');
+
+        if (fileInput.files.length > 0) {
+            uploadButton.style.display = 'block';
+        } else {
+            uploadButton.style.display = 'none';
+        }
+    }
+</script>
+}
