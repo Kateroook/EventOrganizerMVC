@@ -27,15 +27,23 @@ namespace EventOrganizerInfrastructure.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            if (model.Role == "Participant")
+            {
+                // Удаляем ошибки валидации для полей организации и номера телефона
+                ModelState.Remove("OrganizationName");
+                ModelState.Remove("PhoneNumber");
+            }
+
+           
             if (ModelState.IsValid)
             {
-                User user = new User 
+                User user = new User
                 {
-                    Email = model.Email, 
-                    UserName = model.Email, 
-                    PhoneNumber = model.PhoneNumber,
+                    Email = model.Email,
+                    UserName = model.Email,
                     RegistrationDate = DateOnly.FromDateTime(DateTime.Today)
                 };
+
                 // додаємо користувача
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -46,10 +54,11 @@ namespace EventOrganizerInfrastructure.Controllers
                         user.PhoneNumber = model.PhoneNumber;
                         await _userManager.AddToRoleAsync(user, "Organizer");
                     }
-                    else
-                    {                       
+                    else if (model.Role == "Participant")
+                    {
                         await _userManager.AddToRoleAsync(user, "Participant");
                     }
+
                     // установка кукі
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
@@ -62,6 +71,7 @@ namespace EventOrganizerInfrastructure.Controllers
                     }
                 }
             }
+
             return View(model);
         }
 

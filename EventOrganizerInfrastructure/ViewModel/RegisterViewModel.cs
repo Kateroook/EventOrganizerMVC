@@ -12,8 +12,8 @@ namespace EventOrganizerInfrastructure.ViewModel
         [Display(Name="Пароль")]
         public string Password { get; set; }
 
-        [Display(Name ="Номер телефону")]
-        public string PhoneNumber { get; set; } = string.Empty;
+        [Display(Name = "Номер телефону")]
+        public string PhoneNumber { get; set; } = "0000000000";
 
         [Required]
         [Compare("Password", ErrorMessage ="Паролі не співпадають")]

@@ -26,10 +26,12 @@ public partial class Event : Entity
     [Display(Name = "Доповідач")]
     public string? Speaker { get; set; }
 
+    [Display(Name = "Час початку")]
     [DataType(DataType.DateTime)]
     [DisplayFormat(DataFormatString = "{0:dd MMMM yyyy, HH:mm, ddd}", ApplyFormatInEditMode = false)]
     public DateTime DateTimeStart { get; set; }
 
+    [Display(Name = "Час кінця")]
     [DataType(DataType.DateTime)]
     [DisplayFormat(DataFormatString = "{0:dd MMMM, HH:mm, ddd}", ApplyFormatInEditMode = false)]
     public DateTime DateTimeEnd { get; set; }
