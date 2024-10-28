@@ -34,6 +34,38 @@ namespace EventOrganizerInfrastructure.Controllers
             _roleManager = roleManager;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetTags(string searchTerm)
+        {
+            var tags = await _context.Tags
+                .Where(t => t.Title.Contains(searchTerm))
+                .Select(t => new { id = t.Id, title = t.Title })
+                .Take(10)
+                .ToListAsync();
+            return Json(tags);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrganizers(string term)
+        {
+            var organizers = await _userManager.GetUsersInRoleAsync("Organizer");
+
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                organizers = organizers
+                    .Where(o => o.OrganizationOrFullName.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            var result = organizers.Select(o => new
+            {
+                id = o.Id,
+                text = o.OrganizationOrFullName
+            });
+
+            return Json(new { results = result });
+        }
+
         // GET: Events
         public async Task<IActionResult> Index(int? page)
         {
@@ -132,8 +164,17 @@ namespace EventOrganizerInfrastructure.Controllers
                     @event.Organizers.Add(currentUser);
                 }
 
+                foreach (var organizerId in organizers)
+                {
+                    var organizer = await _userManager.FindByIdAsync(organizerId.ToString());
+                    if (organizer != null && !@event.Organizers.Contains(organizer))
+                    {
+                        @event.Organizers.Add(organizer);
+                    }
+                } 
+                
                 _context.Add(@event);
-
+               
                 foreach (var tagId in tags)
                 {
                     var eventTag = _context.Tags.Find(tagId);
@@ -143,7 +184,7 @@ namespace EventOrganizerInfrastructure.Controllers
                 //if((place.Capacity != null && @event.Capacity == null) || (place.Capacity != null && @event.Capacity >= place.Capacity))
                 //{
                 //    @event.Capacity = place.Capacity;
-                //}
+                //} 
                 @event.CreatedAt = DateTime.Now;
                 @event.LastUpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
@@ -156,6 +197,63 @@ namespace EventOrganizerInfrastructure.Controllers
         }
 
 
+
+        //// GET: Events/Edit/5
+        //[Authorize(Roles = "Organizer, Moderator")]
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var @event = await _context.Events
+        //        .Include(e => e.Place)
+        //            .ThenInclude(e => e.City)
+        //                .ThenInclude(e => e.Country)
+        //        .Include(e => e.Place)
+        //            .ThenInclude(pt => pt.PlaceType)
+        //        .Include(e => e.Organizers)
+        //        .Include(e => e.Tags)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+
+        //    if (@event == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+
+        //    var allTags = _context.Tags.ToList();
+
+        //    ViewBag.SelectedTags = @event.Tags.Select(t => t.Id).ToList();
+        //    //ViewBag.TagId = new SelectList(allTags, "Id", "Title");
+
+
+        //    ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
+        //    ViewData["TagId"] = new MultiSelectList(allTags, "Id", "Title");
+
+        //    var organizers = await _userManager.GetUsersInRoleAsync("Organizer");
+        //    var organizerList = organizers.Select(o => new SelectListItem
+        //    {
+        //        Value = o.Id.ToString(),
+        //        Text = o.OrganizationOrFullName
+        //    }).ToList();
+
+        //    ViewBag.SelectedOrganizers = @event.Organizers.Select(o => o.Id).ToList();
+
+        //    ViewData["OrganizerId"] = organizerList;
+
+        //    var countries = await _context.Countries.ToListAsync();
+        //    ViewBag.Countries = new SelectList(countries, "Id", "Name");
+
+        //    var cities = await _context.Cities.ToListAsync();
+        //    ViewBag.Cities = new SelectList(cities, "Id", "Name");
+
+        //    var placesInCities = await _context.Places.Include(c => c.City).ThenInclude(c => c.Country).Include(pt => pt.PlaceType).ToListAsync();
+        //    ViewBag.PlacesInCities = new SelectList(placesInCities, "Id", "Name");
+
+        //    return View(@event);
+        //}
 
         // GET: Events/Edit/5
         [Authorize(Roles = "Organizer, Moderator")]
@@ -181,40 +279,19 @@ namespace EventOrganizerInfrastructure.Controllers
                 return NotFound();
             }
 
-
-            var allTags = _context.Tags.ToList();
-
             ViewBag.SelectedTags = @event.Tags.Select(t => t.Id).ToList();
-            //ViewBag.TagId = new SelectList(allTags, "Id", "Title");
+            ViewBag.SelectedOrganizers = @event.Organizers.Select(o => o.Id).ToList();
 
-
-            ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
-            ViewData["TagId"] = new MultiSelectList(allTags, "Id", "Title");
-
+            ViewData["TagId"] = new MultiSelectList(_context.Tags, "Id", "Title");
             var organizers = await _userManager.GetUsersInRoleAsync("Organizer");
-            var organizerList = organizers.Select(o => new SelectListItem
+            ViewData["OrganizerId"] = organizers.Select(o => new SelectListItem
             {
                 Value = o.Id.ToString(),
                 Text = o.OrganizationOrFullName
             }).ToList();
 
-            ViewBag.SelectedOrganizers = @event.Organizers.Select(o => o.Id).ToList();
-
-            ViewData["OrganizerId"] = organizerList;
-
-            var countries = await _context.Countries.ToListAsync();
-            ViewBag.Countries = new SelectList(countries, "Id", "Name");
-
-            var cities = await _context.Cities.ToListAsync();
-            ViewBag.Cities = new SelectList(cities, "Id", "Name");
-
-            var placesInCities = await _context.Places.Include(c => c.City).ThenInclude(c => c.Country).Include(pt => pt.PlaceType).ToListAsync();
-            ViewBag.PlacesInCities = new SelectList(placesInCities, "Id", "Name");
-
             return View(@event);
         }
-
-
 
         // POST: Events/Edit/5
         [Authorize(Roles = "Organizer, Moderator")]
@@ -298,18 +375,19 @@ namespace EventOrganizerInfrastructure.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewBag.SelectedTags = tags.ToList();
+            ViewBag.SelectedOrganizers = organizers.ToList();
             ViewData["PlaceId"] = new SelectList(_context.Places, "Id", "Name", @event.PlaceId);
             ViewData["TagId"] = new SelectList(_context.Tags, "Id", "Title", @event.Tags);
             //ViewData["OrganizerId"] = new SelectList(_context.Users.Where(u => u.Role.Name.ToLower() == "organizer"), "Id", "OrganizationOrFullName", @event.Organizers);
             var organizerss = await _userManager.GetUsersInRoleAsync("Organizer");
-            // Формируем список организаторов для передачи в представление
+
             var organizerList = organizerss.Select(o => new SelectListItem
             {
                 Value = o.Id.ToString(),
-                Text = o.OrganizationOrFullName // Или любое другое поле, которое вы хотите отобразить
+                Text = o.OrganizationOrFullName 
             }).ToList();
 
-            // Передаем список организаторов в представление
             ViewData["OrganizerId"] = organizerList;
             return View(@event);
         }

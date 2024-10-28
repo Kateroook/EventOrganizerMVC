@@ -167,8 +167,8 @@ namespace EventOrganizerInfrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("PlaceTypeId,CityId,Name,Description,UnitNumber,AddressLine1,AddressLine2,Zip,CoordinatesCol1,CoordinatesCol2,PlaceImage,Capacity,PhoneNumber,ContactEmail,Website,Id")] Place place)
         {
-            PlaceType country = await _context.PlaceTypes.FindAsync(place.PlaceTypeId);
-            place.PlaceType = country;
+            PlaceType placeType = await _context.PlaceTypes.FindAsync(place.PlaceTypeId);
+            place.PlaceType = placeType;
             ModelState.Clear();
             TryValidateModel(place);
             if (id != place.Id)

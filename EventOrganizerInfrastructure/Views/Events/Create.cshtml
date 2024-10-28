@@ -53,7 +53,7 @@
             {
                 <div class="form-group">
                     <label asp-for="Organizers" class="control-label">Організатори</label>
-                    <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple" id="organizers" required>
+                    <select asp-for="Organizers" class="form-control" asp-items="ViewBag.OrganizerId" multiple="multiple" id="organizersSelect" required>
                     </select>
                 </div>
             }
@@ -126,9 +126,49 @@
     <script>
         $(document).ready(function () {
             const placeSelector = new PlaceSelector();
-            $('#tagsSelect').select2();
-            $('#place').select2();
-            $('#organizers').select2();
+
+            $('#tagsSelect').select2({
+                placeholder: 'Оберіть теги',
+                minimumInputLength: 3,
+                ajax: {
+                    url: '@Url.Action("GetTags", "Events")',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return { id: item.id, text: item.title };
+                            })
+                        };
+                    }
+                }
+            });
+
+            $('#organizersSelect').select2({
+                placeholder: 'Оберіть організаторів',
+                minimumInputLength: 3,
+                allowClear: true,
+                ajax: {
+                    url: '@Url.Action("GetOrganizers", "Events")',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            term: params.term 
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.results
+                        };
+                    }
+                }
+            });
         });
     </script>
 

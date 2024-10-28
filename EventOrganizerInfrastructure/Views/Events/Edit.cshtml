@@ -130,19 +130,54 @@
     <script src="~/js/placeSelector.js" async></script>
     <script>
         $(document).ready(function () {
-            const placeSelector = new PlaceSelector();
-            $('#tagsSelect').select2();
-            //$('#place').select2();
-            //$('#onlinePlaces').select2();
-            $('#organizersSelect').select2();            
+            $('#tagsSelect').select2({
+                placeholder: 'Оберіть теги',
+                minimumInputLength: 3,
+                ajax: {
+                    url: '@Url.Action("GetTags", "Events")',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return { id: item.id, text: item.title };
+                            })
+                        };
+                    }
+                }
+            });
 
-            var selectedTags = [@Html.Raw(Json.Serialize(ViewBag.SelectedTags))];           
-            $('#tagsSelect').val(selectedTags);            
-            $('#tagsSelect').trigger('change');
-            
-            var selectedOrginazers = [@Html.Raw(Json.Serialize(ViewBag.SelectedOrganizers))];
-            $('#organizersSelect').val(selectedOrginazers);
-            $('#organizersSelect').trigger('change');
+            $('#organizersSelect').select2({
+                ajax: {
+                    url: '@Url.Action("GetOrganizers", "Events")',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            term: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.results
+                        };
+                    }
+                },
+                minimumInputLength: 3,
+                placeholder: 'Оберіть організаторів',
+                allowClear: true
+            });
+
+            var selectedTags = @Html.Raw(Json.Serialize(ViewBag.SelectedTags));
+            var selectedOrganizers = @Html.Raw(Json.Serialize(ViewBag.SelectedOrganizers));
+
+            $('#tagsSelect').val(selectedTags).trigger('change');
+            $('#organizersSelect').val(selectedOrganizers).trigger('change');
         });
     </script>
 
